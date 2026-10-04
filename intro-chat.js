@@ -3,7 +3,7 @@ import { playSound, playVoice, preloadAudio, stopVoice } from "./sounds.js";
 
 const PHONE_ENTER_SECONDS = 0.5;
 const TYPING_SECONDS = { friend: 0.9, biscuit: 0.6 };
-const GAP_SECONDS = 0.45;
+const GAP_SECONDS = 0.3;
 const READ_BASE_SECONDS = 0.9;
 const READ_SECONDS_PER_CHARACTER = 0.055;
 const MORPH_SECONDS = 0.9;
@@ -146,7 +146,7 @@ function buildSchedule(messages, voiceFor) {
     const start = typingStart + (TYPING_SECONDS[message.from] ?? TYPING_SECONDS.friend);
     const readSeconds = READ_BASE_SECONDS + message.text.length * READ_SECONDS_PER_CHARACTER;
     const voiceSeconds = voiceFor(message.text)?.seconds ?? 0;
-    const end = start + Math.max(readSeconds, voiceSeconds + 0.3);
+    const end = start + Math.max(readSeconds, voiceSeconds + 0.15);
     time = end + GAP_SECONDS;
     return { message, typingStart, start, end };
   });

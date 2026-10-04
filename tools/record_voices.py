@@ -2,6 +2,7 @@
 """Record the lesson's voice lines in your browser.
 
 Run from the project folder on a Mac:  python3 tools/record_voices.py
+Clean up takes you already recorded:   python3 tools/record_voices.py --retrim
 
 It opens a recording page at http://localhost:8800/tools/recorder/. Each take
 is trimmed, leveled, converted to .m4a, and saved straight into assets/voice/,
@@ -21,15 +22,14 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from trim_audio import speech_bounds  # noqa: E402
 from voice_lines import MANIFEST, ROOT, VOICE_DIR, load_lesson, spoken_lines  # noqa: E402
 
 PORT = 8800
 MAX_UPLOAD_BYTES = 20 * 1024 * 1024
-CLEANUP_FILTER = (
-    "silenceremove=start_periods=1:start_threshold=-48dB:start_silence=0.08,"
-    "areverse,silenceremove=start_periods=1:start_threshold=-48dB:start_silence=0.15,areverse,"
-    "loudnorm=I=-16:TP=-1.5:LRA=11"
-)
+LOUDNESS_FILTER = "loudnorm=I=-16:TP=-1.5:LRA=11"
+FADE_IN_SECONDS = 0.01
+FADE_OUT_SECONDS = 0.05
 UPLOAD_EXTENSIONS = {"audio/mp4": ".mp4", "audio/webm": ".webm", "audio/ogg": ".ogg", "audio/wav": ".wav"}
 
 
@@ -61,22 +61,39 @@ def write_manifest():
     MANIFEST.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
-def save_recording(line_id, audio, content_type):
-    extension = UPLOAD_EXTENSIONS.get(content_type.split(";")[0].strip(), ".webm")
+def clean_take(source, cleaned):
+    bounds = speech_bounds(source) or (0.0, clip_seconds(source))
+    start, end = bounds
+    length = max(end - start, FADE_IN_SECONDS + FADE_OUT_SECONDS)
+    filters = (
+        f"afade=t=in:d={FADE_IN_SECONDS},"
+        f"afade=t=out:st={length - FADE_OUT_SECONDS:.3f}:d={FADE_OUT_SECONDS},{LOUDNESS_FILTER}"
+    )
+    subprocess.run(
+        ["ffmpeg", "-y", "-loglevel", "error", "-ss", f"{start:.3f}", "-t", f"{length:.3f}", "-i", str(source),
+         "-af", filters, "-ar", "44100", "-ac", "1", "-c:a", "aac", "-b:a", "96k", str(cleaned)],
+        check=True,
+    )
+
+
+def store_take(line_id, source):
     with tempfile.TemporaryDirectory() as scratch:
-        source = Path(scratch) / f"take{extension}"
         cleaned = Path(scratch) / "take.m4a"
-        source.write_bytes(audio)
-        subprocess.run(
-            ["ffmpeg", "-y", "-loglevel", "error", "-i", str(source), "-af", CLEANUP_FILTER,
-             "-ar", "44100", "-ac", "1", "-c:a", "aac", "-b:a", "96k", str(cleaned)],
-            check=True,
-        )
+        clean_take(source, cleaned)
         content_hash = hashlib.sha1(cleaned.read_bytes()).hexdigest()[:8]
         for old in recordings_for(line_id):
             old.unlink()
         target = VOICE_DIR / f"{line_id}-{content_hash}.m4a"
         shutil.move(cleaned, target)
+    return target
+
+
+def save_recording(line_id, audio, content_type):
+    extension = UPLOAD_EXTENSIONS.get(content_type.split(";")[0].strip(), ".webm")
+    with tempfile.TemporaryDirectory() as scratch:
+        source = Path(scratch) / f"take{extension}"
+        source.write_bytes(audio)
+        target = store_take(line_id, source)
     write_manifest()
     return {"file": f"assets/voice/{target.name}", "seconds": clip_seconds(target)}
 
@@ -146,9 +163,24 @@ class RecorderHandler(SimpleHTTPRequestHandler):
             super().log_message(format, *args)
 
 
+def retrim_all():
+    for line in current_lines():
+        if not line["file"]:
+            continue
+        with tempfile.TemporaryDirectory() as scratch:
+            original = Path(scratch) / "original.m4a"
+            shutil.copy(ROOT / line["file"], original)
+            store_take(line["id"], original)
+    write_manifest()
+    print("Re-trimmed every recorded take.")
+
+
 def main():
     if not shutil.which("ffmpeg"):
         sys.exit("ffmpeg is missing. Install it with: brew install ffmpeg")
+    if "--retrim" in sys.argv:
+        retrim_all()
+        return
     VOICE_DIR.mkdir(parents=True, exist_ok=True)
     write_manifest()
     server = ThreadingHTTPServer(("127.0.0.1", PORT), partial(RecorderHandler, directory=str(ROOT)))

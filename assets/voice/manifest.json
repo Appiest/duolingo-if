@@ -1,1 +1,294 @@
-{}
+{
+  "I owe $4.15 in tolls?? I've never even been in a car! Should I just pay it?": {
+    "file": "assets/voice/21dab2b4fa-1c00aae2.m4a",
+    "seconds": 6.2
+  },
+  "Help!! I got this text. Do I have to pay it?": {
+    "file": "assets/voice/b495202df7-cc494f8b.m4a",
+    "seconds": 3.9
+  },
+  "Stop! Don't tap that link. That's a scam text.": {
+    "file": "assets/voice/a687d10397-e8da0e50.m4a",
+    "seconds": 3.6
+  },
+  "A scam text? What's that?": {
+    "file": "assets/voice/3b94f732c5-e3263d55.m4a",
+    "seconds": 2.82
+  },
+  "It's a text from someone pretending to be a company you trust. They want your money or your secret codes.": {
+    "file": "assets/voice/5bf60e1d94-cc738af0.m4a",
+    "seconds": 6.2
+  },
+  "In 2024, people told the government they lost $470 million to scam texts!": {
+    "file": "assets/voice/1d8e122f88-fbb71caf.m4a",
+    "seconds": 4.4
+  },
+  "$470 million?! That's a LOT of dog treats.": {
+    "file": "assets/voice/5cac8f457b-16183dca.m4a",
+    "seconds": 4.7
+  },
+  "Scam texts can look really real. But they leave clues, and you can learn to spot them.": {
+    "file": "assets/voice/4016c876ff-dd8ed3a1.m4a",
+    "seconds": 5.0
+  },
+  "Teach me!": {
+    "file": "assets/voice/8f6e0fb754-7ee5b867.m4a",
+    "seconds": 1.46
+  },
+  "Real or scam?": {
+    "file": "assets/voice/5b6b22fb69-22f22cf2.m4a",
+    "seconds": 2.28
+  },
+  "You got it! I almost tapped that link.": {
+    "file": "assets/voice/976224fbe1-d231d25f.m4a",
+    "seconds": 2.835
+  },
+  "It's a scam! Real toll companies don't text you a link and tell you to pay today.": {
+    "file": "assets/voice/d8cfdef4a8-e1913384.m4a",
+    "seconds": 5.3
+  },
+  "Tap the part that's trying to rush you.": {
+    "file": "assets/voice/a2031405d1-8692c1bd.m4a",
+    "seconds": 2.219
+  },
+  "That's Pressure! Scammers rush you so you don't stop and think.": {
+    "file": "assets/voice/064c5e4093-33aac89c.m4a",
+    "seconds": 4.0
+  },
+  "The rushing part is \"Pay by today to avoid a $50 late fee.\" That's Pressure.": {
+    "file": "assets/voice/9582d7268c-2ed863a3.m4a",
+    "seconds": 6.0
+  },
+  "Tap the matching pairs": {
+    "file": "assets/voice/0e1f32b472-1bec1106.m4a",
+    "seconds": 1.81
+  },
+  "Pretend, Problem, Pressure, Pay. The 4 P's! I'm writing them on my paw.": {
+    "file": "assets/voice/0bc5271c1e-b05eae9a.m4a",
+    "seconds": 5.9
+  },
+  "Those are the 4 P's: Pretend, Problem, Pressure, and Pay.": {
+    "file": "assets/voice/aa4a9b4127-89be7ddd.m4a",
+    "seconds": 4.8
+  },
+  "Biscuit ordered a toy yesterday. Now he gets this text. Real or scam?": {
+    "file": "assets/voice/cf8aa47f42-5cd8a1d3.m4a",
+    "seconds": 5.8
+  },
+  "Real! It doesn't ask me to do anything. No link, no money, no rush.": {
+    "file": "assets/voice/87beab95ae-5f566ddb.m4a",
+    "seconds": 5.5
+  },
+  "This one's real. It doesn't ask for anything. Not sure? Ask a grown-up to check the real USPS app.": {
+    "file": "assets/voice/b84bdc21f7-6549cb40.m4a",
+    "seconds": 6.7
+  },
+  "What should Biscuit do?": {
+    "file": "assets/voice/7bc14582d6-6a4a0c69.m4a",
+    "seconds": 1.602
+  },
+  "Yes! Don't text back. Call the number on your card instead.": {
+    "file": "assets/voice/51855dcae5-19a44a80.m4a",
+    "seconds": 4.6
+  },
+  "Never send a code! A real bank won't ask for it in a text.": {
+    "file": "assets/voice/f42704c7cc-c4ea12e0.m4a",
+    "seconds": 4.0
+  },
+  "No! That code is the key to your account. Never send it.": {
+    "file": "assets/voice/3bacf761fb-ea195494.m4a",
+    "seconds": 3.6
+  },
+  "Asking again still plays along. A real bank never needs that code.": {
+    "file": "assets/voice/d224842ea2-775f5db4.m4a",
+    "seconds": 4.2
+  },
+  "Build Biscuit's new rule.": {
+    "file": "assets/voice/f4d79f7bbe-353c4bb1.m4a",
+    "seconds": 1.904
+  },
+  "Never share a code with anyone who texts you. I'm writing it on my food bowl.": {
+    "file": "assets/voice/db072393d2-1e6f38a2.m4a",
+    "seconds": 5.1
+  },
+  "The rule is \"Never share a code with anyone who texts you.\"": {
+    "file": "assets/voice/64e5807c68-641d0c30.m4a",
+    "seconds": 3.8
+  },
+  "Yes! Skip the link and check the real app yourself.": {
+    "file": "assets/voice/c118d98847-4681ce7c.m4a",
+    "seconds": 4.0
+  },
+  "Close the text, then check the real USPS app or ask a grown-up.": {
+    "file": "assets/voice/9e9407a011-31ea39dd.m4a",
+    "seconds": 5.3
+  },
+  "That link goes to the scammer, not USPS.": {
+    "file": "assets/voice/a9c2952b3e-9a70a855.m4a",
+    "seconds": 4.2
+  },
+  "Texting back tells scammers your number is real. Don't reply at all.": {
+    "file": "assets/voice/ddcd92c666-96f59b10.m4a",
+    "seconds": 5.3
+  },
+  "Biscuit found a scam text. What should he do next?": {
+    "file": "assets/voice/0031552c16-e3d12c0e.m4a",
+    "seconds": 3.6
+  },
+  "7726 spells SPAM on a phone keypad! Phone companies use it to block scammers.": {
+    "file": "assets/voice/444ff25f00-a50309cd.m4a",
+    "seconds": 7.056
+  },
+  "Forward it to 7726, then delete it. 7726 spells SPAM!": {
+    "file": "assets/voice/6dbd02551f-b28a4e11.m4a",
+    "seconds": 5.9
+  },
+  "Any reply tells the scammer your number works.": {
+    "file": "assets/voice/b69c4bb86c-521274e1.m4a",
+    "seconds": 3.7
+  },
+  "Reporting it helps stop the scammer for everyone.": {
+    "file": "assets/voice/04d9f62576-2b6d62ba.m4a",
+    "seconds": 3.9
+  },
+  "Scam detective! Tap all 4 P's in this text.": {
+    "file": "assets/voice/94146a2df1-45e61176.m4a",
+    "seconds": 3.6
+  },
+  "You found all 4! Also, I'm a dog. I don't even have a license.": {
+    "file": "assets/voice/449fdda24d-6bde6514.m4a",
+    "seconds": 6.422
+  },
+  "This text has all 4 P's: Pretend (DMV), Problem (license suspended), Pressure (today), and Pay (gift card).": {
+    "file": "assets/voice/4f97247fd3-083c9f2b.m4a",
+    "seconds": 6.2
+  },
+  "Got it! \"Within 2 hours\" plus a scary threat is Pressure.": {
+    "file": "assets/voice/b199e7b858-4a2e7653.m4a",
+    "seconds": 4.1
+  },
+  "The rushing part is \"Pay within 2 hours or your car will be towed.\"": {
+    "file": "assets/voice/4a9e0e26f0-410cb143.m4a",
+    "seconds": 5.2
+  },
+  "All 4 P's, locked in!": {
+    "file": "assets/voice/1c3a68084d-72b3e3d2.m4a",
+    "seconds": 2.788
+  },
+  "Pretend, Problem, Pressure, Pay. You'll spot them everywhere now.": {
+    "file": "assets/voice/a3451713c4-24383577.m4a",
+    "seconds": 4.1
+  },
+  "Biscuit just booked a vet checkup. Real or scam?": {
+    "file": "assets/voice/360f4da25e-8af5909d.m4a",
+    "seconds": 3.9
+  },
+  "Real! It matches what Biscuit did, and it asks for nothing.": {
+    "file": "assets/voice/44e594bda4-c4cca326.m4a",
+    "seconds": 4.0
+  },
+  "This one's real. It matches his calendar and doesn't ask for anything. Not every text is a scam!": {
+    "file": "assets/voice/e5b927a07b-e9fce104.m4a",
+    "seconds": 5.6
+  },
+  "Never share a code, even with someone who sounds nice.": {
+    "file": "assets/voice/3806f2203a-e76533d1.m4a",
+    "seconds": 3.5
+  },
+  "Never share a code with anyone who texts you. It unlocks YOUR account.": {
+    "file": "assets/voice/fdbe332e0e-1ed604de.m4a",
+    "seconds": 4.2
+  },
+  "That code is for YOUR account. Sending it lets them in.": {
+    "file": "assets/voice/844cf22240-1376716f.m4a",
+    "seconds": 4.8
+  },
+  "That's still playing along. Don't share any code.": {
+    "file": "assets/voice/c55a554321-73e5064c.m4a",
+    "seconds": 3.5
+  },
+  "Yes! Check the real app yourself. It works every time.": {
+    "file": "assets/voice/62b11acef7-91295023.m4a",
+    "seconds": 4.6
+  },
+  "The safe move is checking the real Golden Bank app yourself.": {
+    "file": "assets/voice/2eba3dd508-2b996ad2.m4a",
+    "seconds": 3.8
+  },
+  "That link goes to the scammer.": {
+    "file": "assets/voice/8c2fb0d873-02cf2fe7.m4a",
+    "seconds": 1.75
+  },
+  "A scammer will just say yes.": {
+    "file": "assets/voice/1640b90003-1e837591.m4a",
+    "seconds": 2.115
+  },
+  "What number do you forward scam texts to?": {
+    "file": "assets/voice/3344a33f30-4a458722.m4a",
+    "seconds": 3.3
+  },
+  "7726 spells SPAM. Forward it, then delete it.": {
+    "file": "assets/voice/dbd204fe00-0624b2f2.m4a",
+    "seconds": 4.4
+  },
+  "Forward scam texts to 7726, then delete them.": {
+    "file": "assets/voice/969ca05034-3728860e.m4a",
+    "seconds": 3.7
+  },
+  "911 is for emergencies. Scam texts go to 7726.": {
+    "file": "assets/voice/69573b4c4d-53fff1bf.m4a",
+    "seconds": 4.9
+  },
+  "Never text the scammer back.": {
+    "file": "assets/voice/501b77a03f-bbcb69e2.m4a",
+    "seconds": 2.726
+  },
+  "Boss question! This text has no typos and sounds really official. Real or scam?": {
+    "file": "assets/voice/00ad64f2be-03d24115.m4a",
+    "seconds": 6.1
+  },
+  "Scam! Scammers can use AI to write perfect texts. It's still a surprise problem with a link.": {
+    "file": "assets/voice/e4bbde1879-b27c9365.m4a",
+    "seconds": 6.7
+  },
+  "It's a scam. Perfect spelling doesn't mean it's safe. It's still a surprise problem with a link. Check the real app instead.": {
+    "file": "assets/voice/e6e2691009-6cc5e621.m4a",
+    "seconds": 7.4
+  },
+  "Nice!": {
+    "file": "assets/voice/0f2646b5f5-2cef9a9f.m4a",
+    "seconds": 1.01
+  },
+  "Great job!": {
+    "file": "assets/voice/90003940f3-0d992843.m4a",
+    "seconds": 1.55
+  },
+  "Amazing!": {
+    "file": "assets/voice/378b7ce84d-580f9315.m4a",
+    "seconds": 1.67
+  },
+  "You got it!": {
+    "file": "assets/voice/86d8d0f109-a23359e0.m4a",
+    "seconds": 1.65
+  },
+  "Not quite": {
+    "file": "assets/voice/8bef7727f9-5061521e.m4a",
+    "seconds": 1.45
+  },
+  "Almost!": {
+    "file": "assets/voice/d4e5fc1dd7-f0c4a3d1.m4a",
+    "seconds": 1.09
+  },
+  "5 in a row!": {
+    "file": "assets/voice/4127008f7c-116df90e.m4a",
+    "seconds": 2.283
+  },
+  "10 in a row!": {
+    "file": "assets/voice/2801a8b9e3-165b3e5c.m4a",
+    "seconds": 3.3
+  },
+  "You saved my $4.15! I'm spending it on treats. Same time tomorrow?": {
+    "file": "assets/voice/1327767ac4-0c7db9c3.m4a",
+    "seconds": 6.4
+  }
+}
