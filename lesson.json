@@ -22,7 +22,7 @@
     "introChat": {
       "friend": {
         "name": "Duo",
-        "image": "assets/characters/friend-placeholder.svg"
+        "image": "assets/characters/duo.png"
       },
       "button": "Start lesson",
       "messages": [
