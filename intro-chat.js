@@ -1,4 +1,5 @@
 import { el, linkify } from "./exercises.js";
+import { clamp, createClock, spring } from "./motion.js";
 import { playSound, playVoice, preloadAudio, stopVoice } from "./sounds.js";
 
 const PHONE_ENTER_SECONDS = 0.5;
@@ -223,26 +224,4 @@ function paintMorph(morph, oldLabel, newLabel, rects, progress) {
   oldLabel.style.filter = `blur(${(oldFade * 4).toFixed(2)}px)`;
   newLabel.style.opacity = String(newFade);
   newLabel.style.filter = `blur(${((1 - newFade) * 4).toFixed(2)}px)`;
-}
-
-function createClock() {
-  let origin = performance.now();
-  return {
-    now: () => (performance.now() - origin) / 1000,
-    jumpTo(time) {
-      origin = performance.now() - time * 1000;
-    },
-  };
-}
-
-export function spring(time, frequency = 2, damping = 0.82) {
-  if (time <= 0) return 0;
-  const omega = 2 * Math.PI * frequency;
-  const dampedOmega = omega * Math.sqrt(1 - damping * damping);
-  const decay = Math.exp(-damping * omega * time);
-  return 1 - decay * (Math.cos(dampedOmega * time) + ((damping * omega) / dampedOmega) * Math.sin(dampedOmega * time));
-}
-
-function clamp(value, min, max) {
-  return Math.min(max, Math.max(min, value));
 }

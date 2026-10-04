@@ -23,13 +23,20 @@ const SYNTH_SOUNDS = {
     { frequency: 880, start: 0, duration: 0.08, volume: 0.07 },
     { frequency: 1320, start: 0.05, duration: 0.12, volume: 0.06 },
   ],
-  complete: [
-    { frequency: 523, start: 0, duration: 0.16 },
-    { frequency: 659, start: 0.1, duration: 0.16 },
-    { frequency: 784, start: 0.2, duration: 0.16 },
-    { frequency: 1047, start: 0.3, duration: 0.5 },
+  tick: [
+    { frequency: 1568, start: 0, duration: 0.05, type: "triangle", volume: 0.09 },
   ],
+  complete: (context) => FANFARE.forEach((note) => playBrass(context, note)),
 };
+
+const FANFARE = [
+  { notes: [392], start: 0, duration: 0.09 },
+  { notes: [392], start: 0.1, duration: 0.09 },
+  { notes: [392], start: 0.2, duration: 0.09 },
+  { notes: [523.25], start: 0.3, duration: 0.42 },
+  { notes: [261.63, 523.25, 659.25, 783.99], start: 0.75, duration: 1.0, vibrato: true },
+];
+const BRASS_DETUNE_CENTS = [-7, 0, 7];
 
 let audioContext = null;
 let soundEnabled = true;
@@ -153,7 +160,63 @@ function startBuffer(buffer) {
 }
 
 function playSynth(context, name) {
-  SYNTH_SOUNDS[name]?.forEach((tone) => playTone(context, tone));
+  const sound = SYNTH_SOUNDS[name];
+  if (typeof sound === "function") sound(context);
+  else sound?.forEach((tone) => playTone(context, tone));
+}
+
+function playBrass(context, { notes, start, duration, vibrato }) {
+  const startTime = context.currentTime + start;
+  const endTime = startTime + duration;
+  const output = brassEnvelope(context, startTime, endTime, 0.11 / Math.sqrt(notes.length));
+  const filter = brassFilter(context, startTime);
+  filter.connect(output).connect(context.destination);
+  const wobble = vibrato ? vibratoDepth(context, startTime + 0.25, endTime) : null;
+  for (const frequency of notes) {
+    for (const cents of BRASS_DETUNE_CENTS) {
+      const oscillator = context.createOscillator();
+      oscillator.type = "sawtooth";
+      oscillator.frequency.value = frequency;
+      oscillator.detune.value = cents;
+      wobble?.connect(oscillator.detune);
+      oscillator.connect(filter);
+      oscillator.start(startTime);
+      oscillator.stop(endTime + 0.15);
+    }
+  }
+}
+
+function brassFilter(context, startTime) {
+  const filter = context.createBiquadFilter();
+  filter.type = "lowpass";
+  filter.Q.value = 2;
+  filter.frequency.setValueAtTime(500, startTime);
+  filter.frequency.exponentialRampToValueAtTime(3200, startTime + 0.06);
+  filter.frequency.exponentialRampToValueAtTime(1800, startTime + 0.25);
+  return filter;
+}
+
+function brassEnvelope(context, startTime, endTime, peak) {
+  const gain = context.createGain();
+  const settle = Math.min(startTime + 0.15, endTime);
+  gain.gain.setValueAtTime(0, startTime);
+  gain.gain.linearRampToValueAtTime(peak, startTime + 0.025);
+  gain.gain.linearRampToValueAtTime(peak * 0.75, settle);
+  gain.gain.linearRampToValueAtTime(peak * 0.7, endTime);
+  gain.gain.linearRampToValueAtTime(0, endTime + 0.12);
+  return gain;
+}
+
+function vibratoDepth(context, startTime, endTime) {
+  const lfo = context.createOscillator();
+  const depth = context.createGain();
+  lfo.frequency.value = 5.5;
+  depth.gain.setValueAtTime(0, startTime);
+  depth.gain.linearRampToValueAtTime(12, startTime + 0.2);
+  lfo.connect(depth);
+  lfo.start(startTime);
+  lfo.stop(endTime + 0.15);
+  return depth;
 }
 
 function playTone(context, { frequency, endFrequency, start, duration, type = "sine", volume = 0.16 }) {

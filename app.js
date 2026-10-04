@@ -1,4 +1,5 @@
 import { el, icon, renderExercise, restartAnimation } from "./exercises.js";
+import { TIMELINE, createCelebration } from "./celebration.js";
 import { createIntroChat } from "./intro-chat.js";
 import { configureSoundFiles, installAudioUnlock, isSoundEnabled, playSound, playVoice, playVoices, setSoundEnabled, stopVoice } from "./sounds.js";
 
@@ -12,14 +13,11 @@ const DEFAULT_UI = {
 const PROMPT_VOICE_DELAY_MS = 400;
 const PEEK_VISIBLE_PX = 90;
 const FEEDBACK_VOICE_DELAY_MS = 350;
-const OUTRO_VOICE_DELAY_MS = 900;
 const HOP_POSES = new Set(["happy", "celebrate"]);
 const BADGES = {
   replay: { emoji: "🔁", text: "Previous mistake" },
   boss: { emoji: "⚡", text: "Boss question" },
 };
-const CONFETTI_COLORS = ["#58CC02", "#1CB0F6", "#FF4B4B", "#FFC800", "#CE82FF", "#FF9600"];
-const CONFETTI_SECONDS = 4;
 const DISCLAIMER = "A student concept for a USC Iovine and Young Academy class. Not affiliated with or endorsed by Duolingo.";
 
 const appRoot = document.getElementById("app");
@@ -412,35 +410,53 @@ function showComplete() {
   const correctCount = session.results.filter((result) => result.correct).length;
   const accuracy = Math.round((correctCount / session.results.length) * 100);
   const misses = session.results.filter((result) => !result.correct);
-  const image = characterImage(outro.pose, "biscuit-large");
-  const confetti = el("canvas", { class: "confetti", "aria-hidden": "true" });
-
-  appRoot.replaceChildren(confetti, el("main", { class: "screen screen-complete", tabindex: "-1" },
-    el("div", { class: "screen-body" },
-      el("div", { class: "character-stage" }, speechBubble(outro.speech, "bubble-above"), image),
-      el("h1", { class: "screen-title" }, outro.title),
-      el("p", { class: "rule-card" }, outro.rule),
-      el("div", { class: "stats" },
-        statTile("xp", "Total XP", String(outro.xp)),
-        statTile("accuracy", "Accuracy", `${accuracy}%`),
-        statTile("streak", "Streak", "🔥 1 day")),
+  const tiles = [
+    statTile("xp", "Total XP", outro.xp, String),
+    statTile("accuracy", "Accuracy", accuracy, (value) => `${value}%`),
+    statTile("streak", "Streak", 1, (value) => `🔥 ${value} day`),
+  ];
+  const parts = {
+    canvas: el("canvas", { class: "confetti", "aria-hidden": "true" }),
+    character: el("div", { class: "celebrate-character" }, characterImage(outro.pose, "biscuit-large")),
+    bubble: speechBubble(outro.speech, "bubble-above"),
+    title: el("h1", { class: "screen-title" }, outro.title),
+    tiles,
+    rule: el("p", { class: "rule-card" }, outro.rule),
+    actions: el("div", { class: "complete-actions" },
       el("button", { type: "button", class: "btn btn-primary btn-wide", onClick: startLesson }, "Continue"),
       reviewSection(misses)),
+  };
+
+  appRoot.replaceChildren(parts.canvas, el("main", { class: "screen screen-complete", tabindex: "-1" },
+    el("div", { class: "screen-body" },
+      el("div", { class: "character-stage" }, parts.bubble, parts.character),
+      parts.title,
+      el("div", { class: "stats" }, tiles.map((tile) => tile.root)),
+      parts.rule,
+      parts.actions),
     disclaimer()));
 
   window.scrollTo(0, 0);
   appRoot.querySelector(".screen-complete").focus({ preventScroll: true });
-  restartAnimation(image, "is-hopping");
-  playSound("complete");
-  speakLater(outro.speech, OUTRO_VOICE_DELAY_MS);
-  launchConfetti(confetti);
-  primaryAction = startLesson;
+  const celebration = createCelebration({ parts, cues: celebrationCues(tiles.length, outro.speech), reducedMotion: reducedMotion.matches });
+  celebration.play();
+  primaryAction = () => celebration.skipToEnd() || startLesson();
 }
 
-function statTile(kind, label, value) {
-  return el("div", { class: `stat stat-${kind}` },
-    el("p", { class: "stat-label" }, label),
-    el("p", { class: "stat-value" }, value));
+function celebrationCues(tileCount, speech) {
+  const ticks = TIMELINE.tiles.slice(0, tileCount).map((at) => ({ at, run: () => playSound("tick"), skippable: true }));
+  const voice = voiceFor(speech)?.file;
+  return [
+    { at: 0, run: () => playSound("complete") },
+    ...ticks,
+    { at: TIMELINE.voice, run: () => voice && playVoice(voice) },
+  ];
+}
+
+function statTile(kind, label, target, format) {
+  const value = el("p", { class: "stat-value" }, format(target));
+  const root = el("div", { class: `stat stat-${kind}` }, el("p", { class: "stat-label" }, label), value);
+  return { root, value, target, format };
 }
 
 function reviewSection(misses) {
@@ -456,52 +472,6 @@ function reviewSection(misses) {
     toggle.setAttribute("aria-expanded", String(!list.hidden));
   });
   return el("div", { class: "review" }, toggle, list);
-}
-
-function launchConfetti(canvas) {
-  if (reducedMotion.matches) return;
-  const context = canvas.getContext("2d");
-  const ratio = window.devicePixelRatio || 1;
-  canvas.width = window.innerWidth * ratio;
-  canvas.height = window.innerHeight * ratio;
-  context.setTransform(ratio, 0, 0, ratio, 0, 0);
-  const pieces = Array.from({ length: 140 }, createConfettiPiece);
-  const startTime = performance.now();
-
-  const frame = (now) => {
-    const seconds = (now - startTime) / 1000;
-    context.clearRect(0, 0, window.innerWidth, window.innerHeight);
-    if (seconds > CONFETTI_SECONDS || !canvas.isConnected) return;
-    pieces.forEach((piece) => drawConfettiPiece(context, piece, seconds));
-    requestAnimationFrame(frame);
-  };
-  requestAnimationFrame(frame);
-}
-
-function createConfettiPiece() {
-  return {
-    x: Math.random() * window.innerWidth,
-    y: -20 - Math.random() * window.innerHeight * 0.6,
-    drift: (Math.random() - 0.5) * 80,
-    fall: 90 + Math.random() * 140,
-    spin: (Math.random() - 0.5) * 10,
-    phase: Math.random() * Math.PI * 2,
-    width: 6 + Math.random() * 6,
-    height: 10 + Math.random() * 8,
-    color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
-  };
-}
-
-function drawConfettiPiece(context, piece, seconds) {
-  const x = piece.x + piece.drift * seconds + Math.sin(seconds * 3 + piece.phase) * 18;
-  const y = piece.y + piece.fall * seconds + 140 * seconds * seconds;
-  context.save();
-  context.translate(x, y);
-  context.rotate(piece.phase + piece.spin * seconds);
-  context.scale(1, Math.cos(seconds * 6 + piece.phase));
-  context.fillStyle = piece.color;
-  context.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
-  context.restore();
 }
 
 function handleKeydown(event) {
