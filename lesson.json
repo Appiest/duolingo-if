@@ -26,7 +26,7 @@
     },
     "intro": {
       "pose": "shocked",
-      "speech": "I owe $4.15 in tolls?? I don't even drive. Should I just pay it to be safe?",
+      "speech": "I owe $4.15 in tolls?? I've never even been in a car! Should I just pay it?",
       "button": "Let's find out"
     },
     "introChat": {
@@ -86,15 +86,15 @@
     "outro": {
       "pose": "celebrate",
       "title": "Lesson complete!",
-      "speech": "You saved me $4.15 AND my dignity. Same time tomorrow?",
-      "rule": "Surprise text + a problem + a rush + an ask = stop. Open the real app yourself.",
+      "speech": "You saved my $4.15! I'm spending it on treats. Same time tomorrow?",
+      "rule": "Got a surprise text that wants something fast? Stop! Show a grown-up, or check the real app yourself.",
       "xp": 15
     },
     "signs": {
-      "pretend": "Pretend: claims to be someone you trust",
-      "problem": "Problem: says something is wrong (or you won a prize)",
-      "pressure": "Pressure: rushes you so you don't stop and think",
-      "pay": "Pay a weird way: gift cards, crypto, wire, a link"
+      "pretend": "Pretend: says it's someone you trust",
+      "problem": "Problem: says something is wrong, or that you won something",
+      "pressure": "Pressure: tries to rush you",
+      "pay": "Pay: asks for money in a weird way, like gift cards"
     },
     "sounds": {
       "tap": "",
@@ -140,11 +140,11 @@
       "feedback": {
         "correct": {
           "pose": "happy",
-          "text": "You caught it! I was SO close to tapping that."
+          "text": "You got it! I almost tapped that link."
         },
         "incorrect": {
           "pose": "sad",
-          "text": "That's a scam. Toll agencies don't text surprise fines with a payment link. Notice the deadline: today."
+          "text": "It's a scam! Real toll companies don't text you a link and tell you to pay today."
         }
       }
     },
@@ -176,16 +176,16 @@
       ],
       "newWord": {
         "word": "Pressure",
-        "definition": "A tight deadline or scary consequence meant to rush you."
+        "definition": "When a text tries to rush you, like \"Pay today or else!\""
       },
       "feedback": {
         "correct": {
           "pose": "happy",
-          "text": "Pressure! A tight deadline plus a scary fee. Scammers rush you so you don't stop and think."
+          "text": "That's Pressure! Scammers rush you so you don't stop and think."
         },
         "incorrect": {
           "pose": "sad",
-          "text": "Pressure is the deadline: \"Pay by today to avoid a $50 late fee.\" It's there to rush you."
+          "text": "The rushing part is \"Pay by today to avoid a $50 late fee.\" That's Pressure."
         }
       }
     },
@@ -193,37 +193,37 @@
       "id": "q3",
       "type": "match-pairs",
       "concept": "signs",
-      "prompt": "Tap the matching pairs.",
+      "prompt": "Tap the matching pairs",
       "pairs": [
         {
           "left": "\"USPS: Your package is on hold\"",
           "right": "Pretend",
-          "hint": "Claims to be someone you trust"
+          "hint": "Says it's someone you trust"
         },
         {
-          "left": "\"Your account has been locked\"",
+          "left": "\"Your account is locked\"",
           "right": "Problem",
           "hint": "Says something is wrong"
         },
         {
-          "left": "\"Respond within 1 hour\"",
+          "left": "\"Answer in 1 hour!\"",
           "right": "Pressure",
-          "hint": "Rushes you"
+          "hint": "Tries to rush you"
         },
         {
           "left": "\"Pay with a gift card\"",
-          "right": "Pay a weird way",
-          "hint": "Real companies don't ask for this"
+          "right": "Pay",
+          "hint": "Asks for money in a weird way"
         }
       ],
       "feedback": {
         "correct": {
           "pose": "happy",
-          "text": "Those are the 4 signs of a scam: Pretend, Problem, Pressure, Pay a weird way."
+          "text": "Pretend, Problem, Pressure, Pay. The 4 P's! I'm writing them on my paw."
         },
         "incorrect": {
           "pose": "sad",
-          "text": "Close! Tap a sign's label to see its hint, then try the pair again."
+          "text": "Those are the 4 P's: Pretend, Problem, Pressure, and Pay."
         }
       }
     },
@@ -231,11 +231,11 @@
       "id": "q4",
       "type": "real-or-scam",
       "concept": "legit",
-      "prompt": "Biscuit ordered a chew toy yesterday. Then this arrives. Real or scam?",
+      "prompt": "Biscuit ordered a toy yesterday. Now he gets this text. Real or scam?",
       "context": {
         "emoji": "📦",
         "label": "Biscuit's order",
-        "text": "1x Squeaky Duck Chew Toy, shipped"
+        "text": "1 Squeaky Duck chew toy, shipped"
       },
       "message": {
         "sender": "USPS",
@@ -245,11 +245,11 @@
       "feedback": {
         "correct": {
           "pose": "happy",
-          "text": "Nice. It asks for nothing: no link, no money, no rush."
+          "text": "Real! It doesn't ask me to do anything. No link, no money, no rush."
         },
         "incorrect": {
           "pose": "idle",
-          "text": "Good instinct to check! This one asks for nothing. If you're ever unsure, opening the USPS app yourself is safe either way."
+          "text": "This one's real. It doesn't ask for anything. Not sure? Ask a grown-up to check the real USPS app."
         }
       }
     },
@@ -257,36 +257,36 @@
       "id": "q5",
       "type": "chat-reply",
       "concept": "code",
-      "prompt": "What should Biscuit reply?",
+      "prompt": "What should Biscuit do?",
       "message": {
         "sender": "Golden Bank Fraud Team",
-        "text": "We blocked a suspicious $892 charge. To unlock your account, reply with the 6-digit code we just sent you."
+        "text": "We stopped a weird $892 charge. To unlock your account, text us the 6-digit code we just sent you."
       },
       "options": [
         {
           "id": "a",
           "text": "Sure! It's 482910",
-          "feedback": "WAIT. A real bank never asks you to read back a code. That code is the key to your account."
+          "feedback": "No! That code is the key to your account. Never send it."
         },
         {
           "id": "b",
-          "text": "Can you resend it?",
-          "feedback": "Asking for it again still plays along. The bank should never need that code from you."
+          "text": "Can you send it again?",
+          "feedback": "Asking again still plays along. A real bank never needs that code."
         },
         {
           "id": "c",
-          "text": "I'll call the number on my card instead."
+          "text": "(Don't reply. Call the number on my bank card.)"
         }
       ],
       "answer": "c",
       "feedback": {
         "correct": {
           "pose": "happy",
-          "text": "Exactly. Call the number on your card, not one from the text."
+          "text": "Yes! Don't text back. Call the number on your card instead."
         },
         "incorrect": {
           "pose": "shocked",
-          "text": "WAIT. A real bank never asks you to read back a code. That code is the key to your account."
+          "text": "Never send a code! A real bank won't ask for it in a text."
         }
       }
     },
@@ -299,7 +299,6 @@
         "Never",
         "share",
         "a",
-        "one-time",
         "code",
         "with",
         "anyone",
@@ -316,20 +315,18 @@
         "a",
         "anyone",
         "texts",
-        "one-time",
         "with",
         "always",
-        "password",
         "friends"
       ],
       "feedback": {
         "correct": {
           "pose": "happy",
-          "text": "Never share a one-time code with anyone who texts you. Write it on my food bowl."
+          "text": "Never share a code with anyone who texts you. I'm writing it on my food bowl."
         },
         "incorrect": {
           "pose": "sad",
-          "text": "Correct rule: \"Never share a one-time code with anyone who texts you.\""
+          "text": "The rule is \"Never share a code with anyone who texts you.\""
         }
       }
     },
@@ -346,30 +343,30 @@
         {
           "id": "a",
           "emoji": "🔗",
-          "label": "Tap the link and update his address",
+          "label": "Tap the link and fix his address",
           "feedback": "That link goes to the scammer, not USPS."
         },
         {
           "id": "b",
           "emoji": "💬",
-          "label": "Reply \"STOP\"",
-          "feedback": "Replying tells scammers your number is real. Don't reply at all."
+          "label": "Text back \"STOP\"",
+          "feedback": "Texting back tells scammers your number is real. Don't reply at all."
         },
         {
           "id": "c",
           "emoji": "📲",
-          "label": "Close the text and check the USPS app himself"
+          "label": "Close it and check the real USPS app"
         }
       ],
       "answer": "c",
       "feedback": {
         "correct": {
           "pose": "happy",
-          "text": "The safe move: skip the link and open the real app yourself."
+          "text": "Yes! Skip the link and check the real app yourself."
         },
         "incorrect": {
           "pose": "sad",
-          "text": "The safe move is to close the text and check the USPS app yourself."
+          "text": "Close the text, then check the real USPS app or ask a grown-up."
         }
       }
     },
@@ -377,11 +374,11 @@
       "id": "q8",
       "type": "multiple-choice",
       "concept": "report",
-      "prompt": "Biscuit spotted a scam text. What's the best next move?",
+      "prompt": "Biscuit found a scam text. What should he do next?",
       "options": [
         {
           "id": "a",
-          "text": "Forward it to 7726 (SPAM), then delete it"
+          "text": "Forward it to 7726, then delete it"
         },
         {
           "id": "b",
@@ -390,19 +387,19 @@
         },
         {
           "id": "c",
-          "text": "Ignore it but keep it forever",
-          "feedback": "Reporting helps your carrier block the scammer for everyone."
+          "text": "Keep it forever but ignore it",
+          "feedback": "Reporting it helps stop the scammer for everyone."
         }
       ],
       "answer": "a",
       "feedback": {
         "correct": {
           "pose": "happy",
-          "text": "7726 spells SPAM on your keypad. Your carrier uses these reports to block scammers."
+          "text": "7726 spells SPAM on a phone keypad! Phone companies use it to block scammers."
         },
         "incorrect": {
           "pose": "sad",
-          "text": "Forward it to 7726 (SPAM), then delete it. Carriers use reports to block scammers."
+          "text": "Forward it to 7726, then delete it. 7726 spells SPAM!"
         }
       }
     },
@@ -410,7 +407,7 @@
       "id": "q9",
       "type": "tap-text",
       "concept": "signs",
-      "prompt": "Scam detective! Tap ALL the signs in this text.",
+      "prompt": "Scam detective! Tap all 4 P's in this text.",
       "multi": true,
       "message": {
         "sender": "CA DMV",
@@ -454,11 +451,11 @@
       "feedback": {
         "correct": {
           "pose": "celebrate",
-          "text": "This one had ALL FOUR. Also, again, I am a dog. I do not have a license."
+          "text": "You found all 4! Also, I'm a dog. I don't even have a license."
         },
         "incorrect": {
           "pose": "sad",
-          "text": "All four signs are here: Pretend (DMV), Problem (suspended license), Pressure (today), Pay a weird way (gift card)."
+          "text": "This text has all 4 P's: Pretend (DMV), Problem (license suspended), Pressure (today), and Pay (gift card)."
         }
       }
     }
@@ -470,7 +467,7 @@
         "id": "q10-pressure",
         "type": "tap-text",
         "concept": "pressure",
-        "prompt": "Replay! Tap the part that's trying to rush you.",
+        "prompt": "Tap the part that's trying to rush you.",
         "message": {
           "sender": "Campus Parking",
           "segments": [
@@ -495,11 +492,11 @@
         "feedback": {
           "correct": {
             "pose": "happy",
-            "text": "You got it this time! \"Within 2 hours\" plus a scary threat = Pressure."
+            "text": "Got it! \"Within 2 hours\" plus a scary threat is Pressure."
           },
           "incorrect": {
             "pose": "idle",
-            "text": "The rush is \"Pay within 2 hours or your car will be towed.\" That's Pressure."
+            "text": "The rushing part is \"Pay within 2 hours or your car will be towed.\""
           }
         }
       },
@@ -507,37 +504,37 @@
         "id": "q10-signs",
         "type": "match-pairs",
         "concept": "signs",
-        "prompt": "Replay! Tap the matching pairs.",
+        "prompt": "Tap the matching pairs",
         "pairs": [
           {
             "left": "\"This is Netflix\"",
             "right": "Pretend",
-            "hint": "Claims to be someone you trust"
+            "hint": "Says it's someone you trust"
           },
           {
-            "left": "\"Your payment failed\"",
+            "left": "\"Your payment didn't go through\"",
             "right": "Problem",
             "hint": "Says something is wrong"
           },
           {
-            "left": "\"Act now or lose access\"",
+            "left": "\"Act now or lose your account!\"",
             "right": "Pressure",
-            "hint": "Rushes you"
+            "hint": "Tries to rush you"
           },
           {
-            "left": "\"Send $20 in crypto\"",
-            "right": "Pay a weird way",
-            "hint": "Real companies don't ask for this"
+            "left": "\"Send a $20 gift card\"",
+            "right": "Pay",
+            "hint": "Asks for money in a weird way"
           }
         ],
         "feedback": {
           "correct": {
             "pose": "happy",
-            "text": "All four signs, locked in."
+            "text": "All 4 P's, locked in!"
           },
           "incorrect": {
             "pose": "idle",
-            "text": "Pretend, Problem, Pressure, Pay a weird way. You'll see them everywhere now."
+            "text": "Pretend, Problem, Pressure, Pay. You'll spot them everywhere now."
           }
         }
       },
@@ -545,7 +542,7 @@
         "id": "q10-legit",
         "type": "real-or-scam",
         "concept": "legit",
-        "prompt": "Replay! Biscuit just booked a vet appointment. Real or scam?",
+        "prompt": "Biscuit just booked a vet checkup. Real or scam?",
         "context": {
           "emoji": "📅",
           "label": "Biscuit's calendar",
@@ -559,11 +556,11 @@
         "feedback": {
           "correct": {
             "pose": "happy",
-            "text": "Real! It matches something Biscuit did, and it asks for nothing."
+            "text": "Real! It matches what Biscuit did, and it asks for nothing."
           },
           "incorrect": {
             "pose": "idle",
-            "text": "This one's real: it matches his calendar and asks for nothing. Not every text is a scam."
+            "text": "This one's real. It matches his calendar and doesn't ask for anything. Not every text is a scam!"
           }
         }
       },
@@ -571,15 +568,15 @@
         "id": "q10-code",
         "type": "chat-reply",
         "concept": "code",
-        "prompt": "Replay! What should Biscuit reply?",
+        "prompt": "What should Biscuit do?",
         "message": {
           "sender": "Unknown number",
-          "text": "Hey! I accidentally sent my verification code to your phone. Can you text it back to me?"
+          "text": "Hi! I sent my code to your phone by mistake. Can you text it to me?"
         },
         "options": [
           {
             "id": "a",
-            "text": "Oh no! Here it is: 771204",
+            "text": "Oops! Here it is: 771204",
             "feedback": "That code is for YOUR account. Sending it lets them in."
           },
           {
@@ -589,18 +586,18 @@
           {
             "id": "c",
             "text": "Which code? I got a few",
-            "feedback": "Still playing along. Don't share any code."
+            "feedback": "That's still playing along. Don't share any code."
           }
         ],
         "answer": "b",
         "feedback": {
           "correct": {
             "pose": "happy",
-            "text": "Never share a one-time code, even with someone who sounds nice."
+            "text": "Never share a code, even with someone who sounds nice."
           },
           "incorrect": {
             "pose": "shocked",
-            "text": "Never share a one-time code with anyone who texts you. That code unlocks YOUR account."
+            "text": "Never share a code with anyone who texts you. It unlocks YOUR account."
           }
         }
       },
@@ -608,39 +605,39 @@
         "id": "q10-safe-move",
         "type": "image-choice",
         "concept": "safe-move",
-        "prompt": "Replay! What should Biscuit do?",
+        "prompt": "What should Biscuit do?",
         "message": {
           "sender": "Golden Bank",
-          "text": "Your card has been frozen. Unfreeze it here: goldenbank-unlock.co"
+          "text": "Your card is frozen. Unfreeze it here: goldenbank-unlock.co"
         },
         "options": [
           {
             "id": "a",
             "emoji": "🔗",
-            "label": "Tap the link to unfreeze",
+            "label": "Tap the link to unfreeze it",
             "feedback": "That link goes to the scammer."
           },
           {
             "id": "b",
             "emoji": "📲",
-            "label": "Open the Golden Bank app himself"
+            "label": "Check the real Golden Bank app"
           },
           {
             "id": "c",
             "emoji": "💬",
-            "label": "Reply \"is this real?\"",
-            "feedback": "The scammer will just say yes."
+            "label": "Text back \"is this real?\"",
+            "feedback": "A scammer will just say yes."
           }
         ],
         "answer": "b",
         "feedback": {
           "correct": {
             "pose": "happy",
-            "text": "Open the real app yourself. Works every time, real or fake."
+            "text": "Yes! Check the real app yourself. It works every time."
           },
           "incorrect": {
             "pose": "idle",
-            "text": "The safe move is opening the bank's app yourself."
+            "text": "The safe move is checking the real Golden Bank app yourself."
           }
         }
       },
@@ -648,7 +645,7 @@
         "id": "q10-report",
         "type": "multiple-choice",
         "concept": "report",
-        "prompt": "Replay! What number do you forward scam texts to?",
+        "prompt": "What number do you forward scam texts to?",
         "options": [
           {
             "id": "a",
@@ -657,23 +654,23 @@
           },
           {
             "id": "b",
-            "text": "7726 (SPAM)"
+            "text": "7726 (it spells SPAM)"
           },
           {
             "id": "c",
             "text": "The number that texted you",
-            "feedback": "Never reply to the scammer."
+            "feedback": "Never text the scammer back."
           }
         ],
         "answer": "b",
         "feedback": {
           "correct": {
             "pose": "happy",
-            "text": "7726 spells SPAM. Forward, then delete."
+            "text": "7726 spells SPAM. Forward it, then delete it."
           },
           "incorrect": {
             "pose": "idle",
-            "text": "Forward scam texts to 7726 (SPAM), then delete them."
+            "text": "Forward scam texts to 7726, then delete them."
           }
         }
       }
@@ -682,7 +679,7 @@
       "id": "q10-boss",
       "type": "real-or-scam",
       "concept": "boss",
-      "prompt": "Boss question! This text has perfect grammar and sounds professional. Real or scam?",
+      "prompt": "Boss question! This text has no typos and sounds really official. Real or scam?",
       "message": {
         "sender": "Golden Bank",
         "text": "We noticed unusual sign-in activity on your account. For your security, please verify your identity using the secure link below. Thank you for banking with us. goldenbank-verify.com"
@@ -691,11 +688,11 @@
       "feedback": {
         "correct": {
           "pose": "celebrate",
-          "text": "Scammers use AI now, so no typos doesn't mean safe. It's still a surprise problem plus a link."
+          "text": "Scam! Scammers can use AI to write perfect texts. It's still a surprise problem with a link."
         },
         "incorrect": {
           "pose": "sad",
-          "text": "Scam. Perfect grammar doesn't mean safe; scammers use AI now. It's still a surprise problem plus a link. Open your bank's app yourself."
+          "text": "It's a scam. Perfect spelling doesn't mean it's safe. It's still a surprise problem with a link. Check the real app instead."
         }
       }
     }
