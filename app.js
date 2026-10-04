@@ -10,6 +10,7 @@ const DEFAULT_UI = {
   comboMilestones: [5, 10],
 };
 const PROMPT_VOICE_DELAY_MS = 400;
+const PEEK_VISIBLE_PX = 90;
 const FEEDBACK_VOICE_DELAY_MS = 350;
 const OUTRO_VOICE_DELAY_MS = 900;
 const HOP_POSES = new Set(["happy", "celebrate"]);
@@ -189,13 +190,15 @@ function buildLessonShell() {
   const checkButton = el("button", { type: "button", class: "btn btn-primary btn-check", onClick: handleCheck }, "Check");
   const bottomBar = el("footer", { class: "bottom-bar" }, el("div", { class: "bar-inner" }, skipButton, checkButton));
   const sheetContent = el("div", { class: "bar-inner sheet-inner" });
-  const sheet = el("section", { class: "sheet", "data-state": "idle", "aria-label": "Answer feedback" }, sheetContent);
+  const peekImage = el("img", { alt: "", width: "200", height: "200" });
+  const sheet = el("section", { class: "sheet", "data-state": "idle", "aria-label": "Answer feedback" },
+    el("div", { class: "sheet-peek", "aria-hidden": "true" }, peekImage), sheetContent);
 
   const root = el("div", { class: "lesson" },
     el("header", { class: "topbar" }, el("div", { class: "topbar-inner" }, closeButton, progress, soundToggle())),
     main, bottomBar, sheet, quitDialog);
 
-  return { root, progress, progressFill, column, main, skipButton, checkButton, bottomBar, sheet, sheetContent };
+  return { root, progress, progressFill, column, main, skipButton, checkButton, bottomBar, sheet, sheetContent, peekImage };
 }
 
 function soundToggle() {
@@ -317,7 +320,7 @@ function finishQuestion({ correct, almost, chosenFeedback }) {
   playSound(feedbackSound(correct, isCombo));
   updateCheckButton();
   const heading = sheetHeading(correct, almost, isCombo);
-  showSheet({ correct, almost, correctAnswer, text, heading });
+  showSheet({ correct, almost, correctAnswer, text, heading, pose: isCombo ? "celebrate" : feedback.pose });
   speakLater([heading, text], FEEDBACK_VOICE_DELAY_MS);
   primaryAction = advance;
 }
@@ -342,8 +345,9 @@ function nextPraise() {
   return heading;
 }
 
-function showSheet({ correct, almost, correctAnswer, text, heading }) {
-  const { sheet, sheetContent, bottomBar, main } = session.shell;
+function showSheet({ correct, almost, correctAnswer, text, heading, pose }) {
+  const { sheet, sheetContent, bottomBar, main, peekImage } = session.shell;
+  peekImage.src = poseSource(pose);
   const continueButton = el("button", { type: "button", class: `btn ${correct ? "btn-primary" : "btn-danger"} sheet-button`, onClick: advance },
     correct ? "Continue" : "Got it");
 
@@ -359,10 +363,18 @@ function showSheet({ correct, almost, correctAnswer, text, heading }) {
 
   sheet.dataset.state = correct ? "correct" : "incorrect";
   bottomBar.inert = true;
-  main.style.setProperty("--sheet-space", `${sheet.offsetHeight}px`);
+  main.style.setProperty("--sheet-space", `${sheet.offsetHeight + PEEK_VISIBLE_PX}px`);
+  revealAboveSheet(session.exercise.element, sheet);
   const answerNote = correct && !almost ? "" : `Correct answer: ${[correctAnswer].flat().join(", ")}.`;
   announce([heading, almost ?? "", answerNote, text].join(" "));
   continueButton.focus({ preventScroll: true });
+}
+
+function revealAboveSheet(element, sheet) {
+  const settledSheetTop = window.innerHeight - sheet.offsetHeight;
+  const visibleBottom = settledSheetTop - PEEK_VISIBLE_PX - 12;
+  const overlap = element.getBoundingClientRect().bottom - visibleBottom;
+  if (overlap > 0) window.scrollBy({ top: overlap, behavior: reducedMotion.matches ? "auto" : "smooth" });
 }
 
 function answerBlock(correctAnswer) {
