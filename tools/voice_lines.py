@@ -67,6 +67,13 @@ def heading_lines(ui):
     return [make_line(NARRATOR, text, "Feedback heading, read before the character's line") for text in headings if text]
 
 
+def chat_label(data, question_id):
+    for label, question in labelled_questions(data):
+        if question["id"] == question_id:
+            return label
+    return question_id
+
+
 def spoken_lines(data):
     lesson = data["lesson"]
     character = lesson["character"]["name"]
@@ -77,6 +84,12 @@ def spoken_lines(data):
     for number, message in enumerate(chat.get("messages", []), start=1):
         speaker = friend if message["from"] == "friend" else character
         lines.append(make_line(speaker, message["text"], f"Intro chat, message {number}", message.get("pose")))
+    for teach in lesson.get("teachChats", []):
+        place = f"Lesson chat before {chat_label(data, teach['before'])}"
+        chat_friend = teach.get("friend", {}).get("name", friend)
+        for number, message in enumerate(teach.get("messages", []), start=1):
+            speaker = chat_friend if message["from"] == "friend" else character
+            lines.append(make_line(speaker, message["text"], f"{place}, message {number}", message.get("pose")))
     for label, question in labelled_questions(data):
         lines += question_lines(label, question, character)
     lines += heading_lines(lesson.get("ui", {}))

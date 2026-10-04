@@ -252,7 +252,7 @@ function renderTapText(question, context) {
       const node = segmentNodes.get(segment.id);
       lockSegment(node);
       node.classList.add(segmentResultClass(correctIds.has(segment.id), selected.has(segment.id)));
-      if (question.multi && segment.tag) node.after(el("span", { class: "segment-tag" }, signName(context.lesson, segment.tag)));
+      if (question.multi && segment.tag) node.after(el("span", { class: `segment-tag p-${segment.tag}` }, signName(context.lesson, segment.tag)));
     }
   };
 

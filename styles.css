@@ -29,6 +29,15 @@
   --streak: #ff9600;
   --streak-text: #c56a00;
 
+  --p-pretend: #8e44c9;
+  --p-pretend-fill: #f3e8ff;
+  --p-problem: #c2410c;
+  --p-problem-fill: #ffedd5;
+  --p-pressure: #0e7ab8;
+  --p-pressure-fill: #dcf1fc;
+  --p-pay: #a16207;
+  --p-pay-fill: #fef3c7;
+
   --sms-in: #e9e9eb;
   --sms-out: #1677c9;
   --sms-link: #0b63c4;
@@ -775,12 +784,33 @@ img {
   cursor: default;
 }
 
-.segment-tag {
+.p-pretend {
+  --p-color: var(--p-pretend);
+  --p-fill: var(--p-pretend-fill);
+}
+
+.p-problem {
+  --p-color: var(--p-problem);
+  --p-fill: var(--p-problem-fill);
+}
+
+.p-pressure {
+  --p-color: var(--p-pressure);
+  --p-fill: var(--p-pressure-fill);
+}
+
+.p-pay {
+  --p-color: var(--p-pay);
+  --p-fill: var(--p-pay-fill);
+}
+
+.segment-tag,
+.example-tag {
   display: inline-block;
   margin: 0 4px;
   padding: 0 7px;
   border-radius: 6px;
-  background: var(--green-edge);
+  background: var(--p-color, var(--green-edge));
   color: #ffffff;
   font-size: 13px;
   font-weight: 800;
@@ -1547,6 +1577,61 @@ img {
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.screen-chat.has-example .chat-character-image {
+  width: 76px;
+  height: 76px;
+}
+
+.chat-example-slot {
+  display: grid;
+  grid-template-rows: 0fr;
+}
+
+.chat-example-clip {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.chat-example {
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  background: var(--surface-sunken);
+  border-radius: var(--radius-lg);
+}
+
+.chat-example p {
+  margin: 0;
+}
+
+.example-sender {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.example-text {
+  color: #000000;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.75;
+}
+
+.example-part {
+  padding: 2px 0;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--p-fill) calc(var(--mark, 0) * 100%), transparent);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.example-tag {
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: middle;
+  transform-origin: 50% 50%;
 }
 
 /* Motion */

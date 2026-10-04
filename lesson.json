@@ -69,6 +69,90 @@
         }
       ]
     },
+    "teachChats": [
+      {
+        "before": "q3",
+        "button": "Let's practice",
+        "example": {
+          "sender": "USPS",
+          "segments": [
+            {
+              "text": "USPS:",
+              "tag": "pretend"
+            },
+            {
+              "text": " Your package is on hold!",
+              "tag": "problem"
+            },
+            {
+              "text": " Pay $1.99"
+            },
+            {
+              "text": " with a gift card",
+              "tag": "pay"
+            },
+            {
+              "text": " in the next hour",
+              "tag": "pressure"
+            },
+            {
+              "text": " or it gets sent back: usps-help.co"
+            }
+          ]
+        },
+        "messages": [
+          {
+            "from": "friend",
+            "text": "Scam texts use the same 4 tricks over and over. I call them the 4 P's."
+          },
+          {
+            "from": "biscuit",
+            "text": "Ooh, like a secret code?",
+            "pose": "happy"
+          },
+          {
+            "from": "friend",
+            "text": "Kind of! Look at this one.",
+            "showExample": true
+          },
+          {
+            "from": "friend",
+            "text": "P number 1 is Pretend. It says it's USPS, but anyone can type that name.",
+            "highlight": "pretend"
+          },
+          {
+            "from": "friend",
+            "text": "P number 2 is Problem. It says something is wrong, like a stuck package.",
+            "highlight": "problem"
+          },
+          {
+            "from": "friend",
+            "text": "P number 3 is Pressure. \"In the next hour\" tries to rush you.",
+            "highlight": "pressure"
+          },
+          {
+            "from": "friend",
+            "text": "P number 4 is Pay. Real companies never ask for gift cards!",
+            "highlight": "pay"
+          },
+          {
+            "from": "biscuit",
+            "text": "Pretend, Problem, Pressure, Pay. Wait, that text has ALL of them!",
+            "pose": "shocked",
+            "highlight": "all"
+          },
+          {
+            "from": "friend",
+            "text": "Yep! Spot even one P, and stop and ask a grown-up."
+          },
+          {
+            "from": "biscuit",
+            "text": "Let me try!",
+            "pose": "happy"
+          }
+        ]
+      }
+    ],
     "outro": {
       "pose": "celebrate",
       "title": "Lesson complete!",
@@ -178,22 +262,22 @@
       "prompt": "Tap the matching pairs",
       "pairs": [
         {
-          "left": "\"USPS: Your package is on hold\"",
+          "left": "\"Hi! It's the Mega Game team.\"",
           "right": "Pretend",
           "hint": "Says it's someone you trust"
         },
         {
-          "left": "\"Your account is locked\"",
+          "left": "\"You won 1,000 free coins!\"",
           "right": "Problem",
-          "hint": "Says something is wrong"
+          "hint": "Says something is wrong, or that you won something"
         },
         {
-          "left": "\"Answer in 1 hour!\"",
+          "left": "\"Claim them in 10 minutes!\"",
           "right": "Pressure",
           "hint": "Tries to rush you"
         },
         {
-          "left": "\"Pay with a gift card\"",
+          "left": "\"Send us a picture of your parent's credit card\"",
           "right": "Pay",
           "hint": "Asks for money in a weird way"
         }

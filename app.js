@@ -1,6 +1,6 @@
 import { el, icon, renderExercise, restartAnimation } from "./exercises.js";
 import { TIMELINE, createCelebration } from "./celebration.js";
-import { createIntroChat } from "./intro-chat.js";
+import { createChatScene } from "./chat-scene.js";
 import { configureSoundFiles, installAudioUnlock, isSoundEnabled, playSound, playVoice, playVoices, setSoundEnabled, stopVoice } from "./sounds.js";
 
 const DEFAULT_UI = {
@@ -151,24 +151,43 @@ function showIntro() {
 
 function showIntroChat() {
   if (!lesson.lesson.introChat?.messages?.length) return startLesson();
+  playChat(lesson.lesson.introChat, "Skip intro", startLesson);
+}
+
+function playChat(chat, skipLabel, onFinish) {
   stopVoice();
-  const introChat = createIntroChat({
+  const scene = createChatScene({
     lesson,
+    chat,
     voiceFor,
     poseSource,
     soundToggle: soundToggle(),
     reducedMotion: reducedMotion.matches,
-    onFinish: startLesson,
+    skipLabel,
+    onFinish,
   });
-  appRoot.replaceChildren(introChat.root);
-  introChat.root.focus({ preventScroll: true });
-  introChat.start();
-  primaryAction = introChat.handleEnter;
+  appRoot.replaceChildren(scene.root);
+  window.scrollTo(0, 0);
+  scene.root.focus({ preventScroll: true });
+  scene.start();
+  primaryAction = scene.handleEnter;
+}
+
+function pendingTeachChat(questionId) {
+  return (lesson.lesson.teachChats ?? []).find((chat) => chat.before === questionId && !session.shownChats.has(chat));
+}
+
+function showTeachChat(chat) {
+  session.shownChats.add(chat);
+  playChat(chat, "Skip", () => {
+    appRoot.replaceChildren(session.shell.root);
+    showQuestion();
+  });
 }
 
 function startLesson() {
   stopVoice();
-  session = { step: 0, results: [], praiseIndex: 0, streak: 0, voiceTimer: null, phase: "answering", exercise: null, question: null, image: null };
+  session = { step: 0, results: [], praiseIndex: 0, streak: 0, voiceTimer: null, shownChats: new Set(), phase: "answering", exercise: null, question: null, image: null };
   session.shell = buildLessonShell();
   appRoot.replaceChildren(session.shell.root);
   showQuestion();
@@ -238,6 +257,8 @@ function pickFinalQuestion() {
 
 function showQuestion() {
   const { question, badge } = currentQuestion();
+  const teachChat = pendingTeachChat(question.id);
+  if (teachChat) return showTeachChat(teachChat);
   const shell = session.shell;
   session.question = question;
   session.phase = "answering";

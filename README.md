@@ -194,6 +194,19 @@ The friend is Duo. `friend.image` still points to a gray placeholder, so drop Du
 
 Each message waits for its voice clip, or for enough reading time if sound is off, whichever is longer. Tapping the chat jumps to the next message, and "Skip intro" goes straight to the lesson.
 
+## Teaching chats
+
+`lesson.teachChats` holds chats that play in the middle of the lesson, right before the question named in `before`. They teach something new before the learner practices it. They don't count as one of the 10 steps, so the progress bar doesn't move.
+
+The 4 P's chat plays before Q3. It works like the intro chat, plus two extras:
+
+- `example` is a text pinned above the chat, split into `segments`. Segments with a `tag` (`pretend`, `problem`, `pressure`, or `pay`) can light up.
+- In a message, `"showExample": true` reveals the pinned text, `"highlight": "pressure"` lights up that P's part with its label, and `"highlight": "all"` pulses every label at once.
+
+Each P keeps one color everywhere it appears, in the chat and in Q9's labels. The colors are defined once in `styles.css` as `--p-pretend`, `--p-problem`, `--p-pressure`, and `--p-pay`.
+
+Q3's examples are deliberately different from the chat's, so learners apply the P's instead of copying the answer they just saw.
+
 ## Voice
 
 Three voices speak in the lesson:

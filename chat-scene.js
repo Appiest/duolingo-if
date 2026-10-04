@@ -9,38 +9,41 @@ const READ_BASE_SECONDS = 0.9;
 const READ_SECONDS_PER_CHARACTER = 0.055;
 const MORPH_SECONDS = 0.9;
 const SKIP_TOLERANCE_SECONDS = 0.05;
+const LABEL_MAX_WIDTH_PX = 120;
 
 const BUBBLE_COLOR = [22, 119, 201];
 const BUTTON_COLOR = [88, 204, 2];
 const BUTTON_EDGE_COLOR = "#58a700";
 
-export function createIntroChat({ lesson, voiceFor, poseSource, soundToggle, reducedMotion, onFinish }) {
-  const chat = lesson.lesson.introChat;
+export function createChatScene({ lesson, chat, voiceFor, poseSource, soundToggle, reducedMotion, onFinish, skipLabel }) {
   const character = lesson.lesson.character;
+  const friend = chat.friend ?? lesson.lesson.introChat.friend;
+  const example = chat.example ? buildExample(chat.example, lesson.lesson.signs ?? {}) : null;
   const beats = buildSchedule(chat.messages, voiceFor);
   const lastBeat = beats.at(-1);
   const morphStart = lastBeat.start + Math.min(lastBeat.end - lastBeat.start, 1.2);
   const morphEnd = morphStart + MORPH_SECONDS;
 
   const biscuitImage = el("img", { class: "chat-character-image", width: "200", height: "200", alt: "" });
-  const friendImage = el("img", { class: "chat-character-image", width: "200", height: "200", alt: "", src: chat.friend.image });
+  const friendImage = el("img", { class: "chat-character-image", width: "200", height: "200", alt: "", src: friend.image });
   const biscuitFigure = characterFigure(biscuitImage, character.name);
-  const friendFigure = characterFigure(friendImage, chat.friend.name);
-  const rows = beats.map((beat) => buildRow(beat, chat.friend));
-  const thread = el("div", { class: "chat-thread", role: "log", "aria-label": `Chat between ${character.name} and ${chat.friend.name}` }, rows.map((row) => row.root));
+  const friendFigure = characterFigure(friendImage, friend.name);
+  const rows = beats.map((beat) => buildRow(beat, friend));
+  const thread = el("div", { class: "chat-thread", role: "log", "aria-label": `Chat between ${character.name} and ${friend.name}` }, rows.map((row) => row.root));
   const startButton = el("button", { type: "button", class: "btn btn-primary btn-wide chat-start", onClick: finish }, chat.button);
   const morphOld = el("span", { class: "chat-morph-old" }, lastBeat.message.text);
   const morphNew = el("span", { class: "chat-morph-new" }, chat.button);
   const morph = el("div", { class: "chat-morph", "aria-hidden": "true" }, morphOld, morphNew);
 
-  const root = el("main", { class: "screen-chat", tabindex: "-1" },
+  const root = el("main", { class: `screen-chat${example ? " has-example" : ""}`, tabindex: "-1" },
     el("header", { class: "chat-topbar" }, soundToggle,
-      el("button", { type: "button", class: "btn-text chat-skip", onClick: finish }, "Skip intro")),
+      el("button", { type: "button", class: "btn-text chat-skip", onClick: finish }, skipLabel)),
     el("div", { class: "chat-stage" }, biscuitFigure, friendFigure),
+    example?.root,
     el("section", { class: "chat-phone" },
       el("div", { class: "phone-header" },
-        el("img", { class: "chat-header-avatar", src: chat.friend.image, alt: "", width: "36", height: "36" }),
-        el("p", { class: "phone-sender" }, chat.friend.name)),
+        el("img", { class: "chat-header-avatar", src: friend.image, alt: "", width: "36", height: "36" }),
+        el("p", { class: "phone-sender" }, friend.name)),
       thread),
     el("footer", { class: "chat-footer" }, el("div", { class: "bar-inner" }, startButton)),
     morph);
@@ -52,6 +55,7 @@ export function createIntroChat({ lesson, voiceFor, poseSource, soundToggle, red
   function seek(time) {
     beats.forEach((beat, index) => renderRow(rows[index], beat, time, reducedMotion));
     renderCharacters(time);
+    if (example) paintExample(example, beats, time, reducedMotion);
     renderMorph(time);
     if (time < morphEnd) thread.scrollTop = thread.scrollHeight;
   }
@@ -151,6 +155,49 @@ function buildSchedule(messages, voiceFor) {
     time = end + GAP_SECONDS;
     return { message, typingStart, start, end };
   });
+}
+
+function buildExample(example, signs) {
+  const marks = [];
+  const parts = example.segments.flatMap((segment) => {
+    const leadingSpace = segment.text.match(/^\s*/)[0];
+    const part = el("span", { class: segment.tag ? `example-part p-${segment.tag}` : "" }, linkify(segment.text.trimStart()));
+    const nodes = leadingSpace ? [leadingSpace, part] : [part];
+    if (!segment.tag) return nodes;
+    const label = el("span", { class: `example-tag p-${segment.tag}` }, (signs[segment.tag] ?? segment.tag).split(":")[0]);
+    marks.push({ tag: segment.tag, part, label });
+    return [...nodes, label];
+  });
+  const card = el("div", { class: "chat-example", "aria-label": `Example text from ${example.sender}` },
+    el("p", { class: "example-sender" }, example.sender),
+    el("p", { class: "example-text" }, parts));
+  const root = el("div", { class: "chat-example-slot" }, el("div", { class: "chat-example-clip" }, card));
+  return { root, card, marks };
+}
+
+function paintExample(example, beats, time, reducedMotion) {
+  const reveal = beats.find((beat) => beat.message.showExample);
+  const shown = reveal ? springOrStep(time - reveal.start, reducedMotion) : 1;
+  example.root.style.gridTemplateRows = `${clamp(shown, 0, 1).toFixed(3)}fr`;
+  example.card.style.opacity = clamp(shown * 1.6, 0, 1).toFixed(3);
+  example.card.style.translate = `0 ${((1 - shown) * 16).toFixed(2)}px`;
+  const all = beats.find((beat) => beat.message.highlight === "all");
+  const pulse = all && !reducedMotion ? spring(time - all.start, 3, 0.9) - spring(time - all.start - 0.18, 3, 0.9) : 0;
+  for (const mark of example.marks) {
+    const beat = beats.find((item) => item.message.highlight === mark.tag);
+    const lit = beat ? clamp(springOrStep(time - beat.start, reducedMotion), 0, 1) : 0;
+    mark.part.style.setProperty("--mark", lit.toFixed(3));
+    mark.label.style.opacity = lit.toFixed(3);
+    mark.label.style.maxWidth = `${(lit * LABEL_MAX_WIDTH_PX).toFixed(1)}px`;
+    mark.label.style.paddingInline = `${(lit * 7).toFixed(2)}px`;
+    mark.label.style.marginInline = `${(lit * 4).toFixed(2)}px`;
+    mark.label.style.scale = ((0.6 + 0.4 * lit) * (1 + 0.25 * pulse)).toFixed(4);
+  }
+}
+
+function springOrStep(local, reducedMotion) {
+  if (reducedMotion) return local >= 0 ? 1 : 0;
+  return spring(local, 2.4, 0.8);
 }
 
 function currentBiscuitPose(beats, time) {
