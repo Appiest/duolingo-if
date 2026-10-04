@@ -18,6 +18,12 @@
         "rate": 185
       }
     },
+    "narrator": {
+      "voice": {
+        "macVoice": "Shelley (English (US))",
+        "rate": 165
+      }
+    },
     "intro": {
       "pose": "shocked",
       "speech": "I owe $4.15 in tolls?? I don't even drive. Should I just pay it to be safe?",
@@ -103,6 +109,21 @@
       "7726": "7 7 2 6",
       "dmv-ca-notice.info": "D M V dash C A dash notice dot info",
       "CA DMV": "California D M V"
+    },
+    "ui": {
+      "praise": [
+        "Nice!",
+        "Great job!",
+        "Amazing!",
+        "You got it!"
+      ],
+      "incorrect": "Not quite",
+      "almost": "Almost!",
+      "combo": "{count} in a row!",
+      "comboMilestones": [
+        5,
+        10
+      ]
     }
   },
   "questions": [

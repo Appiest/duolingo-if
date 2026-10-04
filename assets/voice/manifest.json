@@ -210,5 +210,101 @@
   "Scam. Perfect grammar doesn't mean safe; scammers use AI now. It's still a surprise problem plus a link. Open your bank's app yourself.": {
     "file": "assets/voice/e6920210b7b8.m4a",
     "seconds": 9.983
+  },
+  "Real or scam?": {
+    "file": "assets/voice/c30bef0cf2a9.m4a",
+    "seconds": 1.406
+  },
+  "Tap the part that's trying to rush you.": {
+    "file": "assets/voice/24f8fcdb7cb1.m4a",
+    "seconds": 2.649
+  },
+  "Tap the matching pairs.": {
+    "file": "assets/voice/65f0ef310e1a.m4a",
+    "seconds": 1.993
+  },
+  "Biscuit ordered a chew toy yesterday. Then this arrives. Real or scam?": {
+    "file": "assets/voice/3dbe9b84835a.m4a",
+    "seconds": 5.549
+  },
+  "What should Biscuit reply?": {
+    "file": "assets/voice/8b4528366e6a.m4a",
+    "seconds": 1.902
+  },
+  "Build Biscuit's new rule.": {
+    "file": "assets/voice/755be1adf2ca.m4a",
+    "seconds": 1.901
+  },
+  "What should Biscuit do?": {
+    "file": "assets/voice/9a80902b15ce.m4a",
+    "seconds": 1.614
+  },
+  "Biscuit spotted a scam text. What's the best next move?": {
+    "file": "assets/voice/77f69b7287e4.m4a",
+    "seconds": 4.493
+  },
+  "Scam detective! Tap ALL the signs in this text.": {
+    "file": "assets/voice/d273d2aa8121.m4a",
+    "seconds": 4.063
+  },
+  "Replay! Tap the part that's trying to rush you.": {
+    "file": "assets/voice/a410e45f3b41.m4a",
+    "seconds": 3.694
+  },
+  "Replay! Tap the matching pairs.": {
+    "file": "assets/voice/56becb10f7bf.m4a",
+    "seconds": 3.054
+  },
+  "Replay! Biscuit just booked a vet appointment. Real or scam?": {
+    "file": "assets/voice/265c651ec76b.m4a",
+    "seconds": 5.086
+  },
+  "Replay! What should Biscuit reply?": {
+    "file": "assets/voice/34b026a1cef4.m4a",
+    "seconds": 2.942
+  },
+  "Replay! What should Biscuit do?": {
+    "file": "assets/voice/ce9fb94ea581.m4a",
+    "seconds": 2.654
+  },
+  "Replay! What number do you forward scam texts to?": {
+    "file": "assets/voice/20f556651e76.m4a",
+    "seconds": 4.19
+  },
+  "Boss question! This text has perfect grammar and sounds professional. Real or scam?": {
+    "file": "assets/voice/8232280a316c.m4a",
+    "seconds": 6.621
+  },
+  "Nice!": {
+    "file": "assets/voice/602809c16aac.m4a",
+    "seconds": 0.926
+  },
+  "Great job!": {
+    "file": "assets/voice/60759776ee7d.m4a",
+    "seconds": 1.31
+  },
+  "Amazing!": {
+    "file": "assets/voice/55cfb9c7f742.m4a",
+    "seconds": 1.071
+  },
+  "You got it!": {
+    "file": "assets/voice/4a55fb950eff.m4a",
+    "seconds": 1.087
+  },
+  "Not quite": {
+    "file": "assets/voice/7367abc9028b.m4a",
+    "seconds": 1.246
+  },
+  "Almost!": {
+    "file": "assets/voice/84e592549aae.m4a",
+    "seconds": 1.135
+  },
+  "5 in a row!": {
+    "file": "assets/voice/22b08cbeb84c.m4a",
+    "seconds": 1.391
+  },
+  "10 in a row!": {
+    "file": "assets/voice/495c7223bf2e.m4a",
+    "seconds": 1.241
   }
 }

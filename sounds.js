@@ -66,13 +66,27 @@ export function preloadAudio(paths) {
   paths.filter(Boolean).forEach((path) => loadBuffer(path).catch(() => {}));
 }
 
-export async function playVoice(path) {
+export function playVoice(path) {
+  return playVoices([path]);
+}
+
+export async function playVoices(paths) {
   stopVoice();
-  if (!soundEnabled || !path) return;
   const request = voiceRequest;
-  const buffer = await loadBuffer(path).catch(() => null);
-  if (!buffer || request !== voiceRequest || !soundEnabled) return;
-  currentVoice = startBuffer(buffer);
+  preloadAudio(paths);
+  for (const path of paths.filter(Boolean)) {
+    const buffer = await loadBuffer(path).catch(() => null);
+    if (request !== voiceRequest || !soundEnabled) return;
+    if (buffer) await playToEnd(buffer);
+    if (request !== voiceRequest) return;
+  }
+}
+
+function playToEnd(buffer) {
+  return new Promise((resolve) => {
+    currentVoice = startBuffer(buffer);
+    currentVoice.onended = resolve;
+  });
 }
 
 export function stopVoice() {

@@ -4,8 +4,10 @@
 Run from the project folder on a Mac:  python3 tools/make_voice.py
 
 Biscuit speaks the intro, the outro, every feedback line and his half of the
-intro chat. The friend speaks the other half. Voices and speeds come from
-lesson.json (character.voice and introChat.friend.voice). Clips are named by a
+intro chat. The friend speaks the other half. The narrator reads every prompt
+and the feedback headings from lesson.ui ("Great job!", "Not quite", and so on).
+Voices and speeds come from lesson.json (character.voice, narrator.voice and
+introChat.friend.voice). Clips are named by a
 hash of voice + text, so editing a line makes a new clip and the old one is
 deleted. The page finds clips through assets/voice/manifest.json.
 """
@@ -34,9 +36,21 @@ def feedback_lines(question):
     return lines
 
 
+def narrator_lines(lesson, questions):
+    ui = lesson.get("ui", {})
+    lines = [question["prompt"] for question in questions if question]
+    lines += ui.get("praise", [])
+    lines += [ui[key] for key in ("incorrect", "almost") if ui.get(key)]
+    combo = ui.get("combo")
+    if combo:
+        lines += [combo.replace("{count}", str(count)) for count in ui.get("comboMilestones", [])]
+    return lines
+
+
 def spoken_lines(data):
     lesson = data["lesson"]
     biscuit = lesson["character"]["voice"]
+    narrator = lesson.get("narrator", {}).get("voice", biscuit)
     chat = lesson.get("introChat", {})
     friend = chat.get("friend", {}).get("voice", biscuit)
 
@@ -45,6 +59,7 @@ def spoken_lines(data):
         lines.append((friend if message["from"] == "friend" else biscuit, message["text"]))
     for question in all_questions(data):
         lines += [(biscuit, text) for text in feedback_lines(question)]
+    lines += [(narrator, text) for text in narrator_lines(lesson, all_questions(data))]
     return lines
 
 

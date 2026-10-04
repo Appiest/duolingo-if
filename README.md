@@ -196,7 +196,13 @@ Each message waits for its voice clip, or for enough reading time if sound is of
 
 ## Voice
 
-Biscuit reads his intro and outro lines, every feedback line, and his half of the intro chat. The friend reads the other half. The clips are made on a Mac with the built-in `say` voices:
+Three voices speak in the lesson:
+
+- **Biscuit** reads his intro and outro lines, every feedback line, and his half of the intro chat.
+- **The friend** reads the other half of the intro chat.
+- **The narrator** reads each question's prompt when it appears, and the feedback heading ("Great job!", "Not quite", "Almost!", "5 in a row!") just before Biscuit's feedback line. The speaker button in the prompt bubble replays the prompt.
+
+The clips are made on a Mac with the built-in `say` voices:
 
 ```sh
 python3 tools/make_voice.py
@@ -204,10 +210,14 @@ python3 tools/make_voice.py
 
 Run it again whenever you change any of those lines in `lesson.json`. It makes clips for new lines, deletes clips for lines that no longer exist, and rewrites `assets/voice/manifest.json`, which the page uses to find each clip. A line without a clip simply plays silently.
 
-- Change the voices with `character.voice` and `introChat.friend.voice`. Run `say -v '?'` to list the voices on your Mac.
+- Change the voices with `character.voice`, `narrator.voice`, and `introChat.friend.voice`. Run `say -v '?'` to list the voices on your Mac.
 - `lesson.pronunciations` fixes words the voice says wrong. For example, it says "7726" as the digits "7 7 2 6".
 
 To use real recordings, replace a clip file in `assets/voice/` with your own audio under the same name. Look up a line's file name in `manifest.json`, and update its `seconds` so the intro chat waits the right amount of time.
+
+## Feedback headings
+
+`lesson.ui` holds the feedback headings. `praise` rotates on correct answers, `incorrect` and `almost` cover the other outcomes, and `combo` replaces praise when the learner reaches a number in `comboMilestones` in a row. `{count}` is filled in with that number. Run the voice script after changing any of these.
 
 ## Sounds
 
@@ -217,7 +227,7 @@ To use real recordings, replace a clip file in `assets/voice/` with your own aud
 "sounds": { "correct": "assets/sounds/correct.mp3" }
 ```
 
-The `combo` sound plays at 5 and 10 correct answers in a row.
+The `combo` sound plays at each number in `ui.comboMilestones`.
 
 ## Swap Biscuit's art
 

@@ -411,6 +411,17 @@ img {
   transform: translateX(-50%) rotate(45deg);
 }
 
+.prompt-line {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.prompt-line .bubble-listen {
+  margin: -6px -10px -6px 0;
+}
+
 .prompt {
   margin: 0;
   font-size: 21px;

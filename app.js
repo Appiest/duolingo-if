@@ -1,9 +1,15 @@
 import { el, icon, renderExercise, restartAnimation } from "./exercises.js";
 import { createIntroChat } from "./intro-chat.js";
-import { configureSoundFiles, isSoundEnabled, playSound, playVoice, setSoundEnabled, stopVoice } from "./sounds.js";
+import { configureSoundFiles, isSoundEnabled, playSound, playVoice, playVoices, setSoundEnabled, stopVoice } from "./sounds.js";
 
-const PRAISE_HEADINGS = ["Nice!", "Great job!", "Amazing!", "You got it!"];
-const COMBO_MILESTONES = new Set([5, 10]);
+const DEFAULT_UI = {
+  praise: ["Nice!", "Great job!", "Amazing!", "You got it!"],
+  incorrect: "Not quite",
+  almost: "Almost!",
+  combo: "{count} in a row!",
+  comboMilestones: [5, 10],
+};
+const PROMPT_VOICE_DELAY_MS = 400;
 const FEEDBACK_VOICE_DELAY_MS = 350;
 const OUTRO_VOICE_DELAY_MS = 900;
 const HOP_POSES = new Set(["happy", "celebrate"]);
@@ -62,11 +68,22 @@ function poseSource(pose) {
   return poses[pose] ?? poses.idle;
 }
 
-function speakLater(text, delay) {
-  const file = voiceFor(text)?.file;
-  if (!file) return;
-  const timer = setTimeout(() => playVoice(file), delay);
+function uiText() {
+  return { ...DEFAULT_UI, ...lesson.lesson.ui };
+}
+
+function speakLater(texts, delay) {
+  const files = [texts].flat().map((text) => voiceFor(text)?.file).filter(Boolean);
+  if (files.length === 0) return;
+  if (session) clearTimeout(session.voiceTimer);
+  const timer = setTimeout(() => playVoices(files), delay);
   if (session) session.voiceTimer = timer;
+}
+
+function listenButton(text, label) {
+  const voice = voiceFor(text);
+  if (!voice) return null;
+  return el("button", { type: "button", class: "icon-button bubble-listen", "aria-label": label, onClick: () => playVoice(voice.file) }, icon("soundOn"));
 }
 
 function showLoadError() {
@@ -95,11 +112,7 @@ function setPose(image, pose) {
 }
 
 function speechBubble(text, variant) {
-  const voice = voiceFor(text);
-  const listenButton = voice
-    ? el("button", { type: "button", class: "icon-button bubble-listen", "aria-label": "Hear Biscuit say this", onClick: () => playVoice(voice.file) }, icon("soundOn"))
-    : null;
-  return el("div", { class: `bubble ${variant}` }, el("p", {}, text), listenButton);
+  return el("div", { class: `bubble ${variant}` }, el("p", {}, text), listenButton(text, "Hear Biscuit say this"));
 }
 
 function disclaimer() {
@@ -230,6 +243,7 @@ function showQuestion() {
   updateCheckButton();
   window.scrollTo(0, 0);
   shell.main.focus({ preventScroll: true });
+  speakLater(question.prompt, PROMPT_VOICE_DELAY_MS);
   primaryAction = handleCheck;
 }
 
@@ -240,7 +254,9 @@ function questionBadge(kind) {
 }
 
 function promptContent(question) {
-  const heading = el("h1", { class: "prompt" }, question.prompt);
+  const heading = el("div", { class: "prompt-line" },
+    el("h1", { class: "prompt" }, question.prompt),
+    listenButton(question.prompt, "Read the question out loud"));
   if (!question.newWord) return [heading];
   return [heading, newWordRow(question.newWord)];
 }
@@ -265,6 +281,7 @@ function updateCheckButton() {
 
 function handleCheck() {
   if (session.phase !== "answering" || !session.exercise.isReady()) return;
+  clearTimeout(session.voiceTimer);
   finishQuestion(session.exercise.check());
 }
 
@@ -282,14 +299,15 @@ function finishQuestion({ correct, almost, chosenFeedback }) {
   const feedback = question.feedback[correct ? "correct" : "incorrect"];
   const text = correct ? feedback.text : chosenFeedback ?? feedback.text;
   session.streak = correct ? session.streak + 1 : 0;
-  const isCombo = correct && COMBO_MILESTONES.has(session.streak);
+  const isCombo = correct && uiText().comboMilestones.includes(session.streak);
 
   session.results.push({ question, correct, correctAnswer });
   setPose(session.image, feedback.pose);
   playSound(feedbackSound(correct, isCombo));
   updateCheckButton();
-  showSheet({ correct, almost, correctAnswer, text, heading: sheetHeading(correct, almost, isCombo) });
-  speakLater(text, FEEDBACK_VOICE_DELAY_MS);
+  const heading = sheetHeading(correct, almost, isCombo);
+  showSheet({ correct, almost, correctAnswer, text, heading });
+  speakLater([heading, text], FEEDBACK_VOICE_DELAY_MS);
   primaryAction = advance;
 }
 
@@ -299,14 +317,16 @@ function feedbackSound(correct, isCombo) {
 }
 
 function sheetHeading(correct, almost, isCombo) {
-  if (!correct) return "Not quite";
-  if (almost) return "Almost!";
-  if (isCombo) return `${session.streak} in a row!`;
+  const ui = uiText();
+  if (!correct) return ui.incorrect;
+  if (almost) return ui.almost;
+  if (isCombo) return ui.combo.replace("{count}", String(session.streak));
   return nextPraise();
 }
 
 function nextPraise() {
-  const heading = PRAISE_HEADINGS[session.praiseIndex % PRAISE_HEADINGS.length];
+  const { praise } = uiText();
+  const heading = praise[session.praiseIndex % praise.length];
   session.praiseIndex += 1;
   return heading;
 }
