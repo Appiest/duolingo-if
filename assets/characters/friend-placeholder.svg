@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Friend placeholder</title>
+  <circle cx="100" cy="104" r="64" fill="#D5D9E0"/>
+  <circle cx="100" cy="104" r="64" fill="none" stroke="#AEB4BE" stroke-width="6" stroke-dasharray="14 12" stroke-linecap="round"/>
+  <path d="M82 88a18 18 0 1 1 26 16c-6 3-8 7-8 13" fill="none" stroke="#6B7280" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="100" cy="138" r="7" fill="#6B7280"/>
+</svg>

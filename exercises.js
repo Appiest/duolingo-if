@@ -66,7 +66,7 @@ function shuffle(items) {
   return copy;
 }
 
-function linkify(text) {
+export function linkify(text) {
   const nodes = [];
   let lastIndex = 0;
   for (const match of text.matchAll(URL_PATTERN)) {
@@ -111,6 +111,7 @@ function createChoiceGroup(items, context, groupClass, buildContent) {
     selectedId = id;
     for (const [itemId, button] of buttons) button.setAttribute("aria-pressed", String(itemId === id));
     restartAnimation(buttons.get(id), "is-bouncing");
+    context.playSound("tap");
     context.onChange();
   };
 
@@ -233,6 +234,7 @@ function renderTapText(question, context) {
     }
     for (const [segmentId, node] of segmentNodes) node.setAttribute("aria-pressed", String(selected.has(segmentId)));
     restartAnimation(segmentNodes.get(id), "is-bouncing");
+    context.playSound("tap");
     if (counter) counter.textContent = `${selected.size} selected`;
     context.onChange();
   };
@@ -301,7 +303,7 @@ function tapTextAnswer(question, lesson) {
 }
 
 function renderMatchPairs(question, context) {
-  const state = { mistakes: 0, matchedCount: 0, picks: { left: null, right: null }, locked: false };
+  const state = { matchedCount: 0, picks: { left: null, right: null }, locked: false };
   const tiles = [];
   const hint = el("p", { class: "pair-hint", role: "status" });
 
@@ -336,6 +338,7 @@ function renderMatchPairs(question, context) {
     if (previous === tile) return;
     tile.button.setAttribute("aria-pressed", "true");
     restartAnimation(tile.button, "is-bouncing");
+    context.playSound("tap");
     if (state.picks.left && state.picks.right) resolvePicks();
   }
 
@@ -348,6 +351,7 @@ function renderMatchPairs(question, context) {
   }
 
   function markMatched(pickedTiles) {
+    context.playSound("match");
     pickedTiles.forEach((tile) => {
       tile.done = true;
       tile.button.classList.add("is-match");
@@ -367,7 +371,6 @@ function renderMatchPairs(question, context) {
   }
 
   function markMismatched(pickedTiles) {
-    state.mistakes += 1;
     context.playSound("incorrect");
     pickedTiles.forEach((tile) => restartAnimation(tile.button, "is-mismatch"));
     setTimeout(() => pickedTiles.forEach((tile) => tile.button.classList.remove("is-mismatch")), MISMATCH_FLASH_MS);
@@ -376,7 +379,7 @@ function renderMatchPairs(question, context) {
   function finish() {
     if (state.locked) return;
     state.locked = true;
-    context.onComplete({ correct: state.mistakes === 0, chosenFeedback: null });
+    context.onComplete({ correct: true, chosenFeedback: null });
   }
 
   return {
@@ -426,6 +429,7 @@ function renderWordBank(question, context) {
     tile.bankButton.disabled = true;
     tile.answerButton = el("button", { type: "button", class: "tile", onClick: () => unplace(tile) }, tile.word);
     answerLine.append(tile.answerButton);
+    context.playSound("tap");
     tiles.find((other) => !placed.includes(other))?.bankButton.focus({ preventScroll: true });
     context.onChange();
   };
@@ -461,10 +465,27 @@ function renderWordBank(question, context) {
     lock,
     check() {
       lock();
-      const words = placed.map((tile) => tile.word);
-      const correct = words.length === question.answer.length && words.every((word, index) => word === question.answer[index]);
-      answerLine.classList.add(correct ? "is-correct" : "is-wrong");
-      return { correct, chosenFeedback: null };
+      const result = judgeWords(placed.map((tile) => tile.word), question);
+      answerLine.classList.add(result.correct ? "is-correct" : "is-wrong");
+      return { ...result, chosenFeedback: null };
     },
   };
+}
+
+function judgeWords(words, question) {
+  const answers = [question.answer, ...(question.acceptedAnswers ?? [])];
+  if (answers.some((answer) => sameWords(words, answer))) return { correct: true };
+  const extraWord = findSingleExtraWord(words, question.answer);
+  if (extraWord) return { correct: true, almost: `You added one extra word: "${extraWord}".` };
+  return { correct: false };
+}
+
+function sameWords(words, answer) {
+  return words.length === answer.length && words.every((word, index) => word === answer[index]);
+}
+
+function findSingleExtraWord(words, answer) {
+  if (words.length !== answer.length + 1) return null;
+  const skipIndex = words.findIndex((_, index) => sameWords(words.filter((__, other) => other !== index), answer));
+  return skipIndex === -1 ? null : words[skipIndex];
 }

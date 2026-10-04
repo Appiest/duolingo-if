@@ -24,7 +24,9 @@ There is no build step. The page is plain HTML, CSS, and JavaScript modules:
 | `styles.css` | All styling. Colors, radii, and the column width are tokens at the top. |
 | `app.js` | The lesson engine: intro, question flow, scoring, Q10 choice, and the complete screen |
 | `exercises.js` | One render function per exercise type |
-| `sounds.js` | Correct, incorrect, and complete sounds synthesized with WebAudio |
+| `intro-chat.js` | The animated text conversation that plays before the lesson |
+| `sounds.js` | Sound effects and voice playback. Every sound can come from a file or fall back to a synthesized version. |
+| `tools/make_voice.py` | Rebuilds the voice clips in `assets/voice/` from `lesson.json` |
 | `lesson.json` | Every word the learner reads in the lesson |
 | `assets/characters/` | Biscuit's five poses |
 
@@ -32,7 +34,7 @@ There is no build step. The page is plain HTML, CSS, and JavaScript modules:
 
 All lesson text lives in `lesson.json`, so you can change wording without touching code. Save the file and refresh the page.
 
-- `lesson` holds the title, unit, character, intro, outro, and the four scam `signs`.
+- `lesson` holds the title, unit, character, intro, intro chat, outro, the four scam `signs`, sound files, and voice pronunciations.
 - `questions` holds questions 1 to 9, shown in order.
 - `q10` holds the final question. If the learner missed anything in 1 to 9, they get the replay under `q10.replays` whose key matches the `concept` of the **first** question they missed. A perfect run gets `q10.boss` instead.
 
@@ -92,7 +94,7 @@ Start a segment with a space when it follows another segment mid-sentence.
 
 ### `match-pairs`
 
-Two shuffled columns. The `hint` appears when someone taps the info button on a right-hand label or long-presses it. The question finishes by itself once every pair is matched, and it counts as correct only if there were no wrong matches.
+Two shuffled columns. The `hint` appears when someone taps the info button on a right-hand label or long-presses it. A wrong pair flashes red and buzzes right away. The question finishes by itself once every pair is matched and always counts as correct, the way Duolingo does it.
 
 ```json
 {
@@ -123,7 +125,9 @@ The learner picks a reply, and it appears in the conversation after checking. `a
 
 ### `word-bank`
 
-A sentence builder. `answer` is the words in order. `tiles` is every tile shown, including extra distractor tiles.
+A sentence builder. `answer` is the words in order. `tiles` is every tile shown, including extra distractor tiles. `acceptedAnswers` is optional and lists other word orders that also count as fully correct.
+
+Judging is forgiving for young learners. If the sentence is right except for one extra tile dropped in, it counts as correct with an "Almost!" note that names the extra word. A missing word or a swapped word, such as "always" in place of "Never", still counts as wrong because it can change the meaning.
 
 ```json
 {
@@ -166,6 +170,55 @@ A numbered list of options. `message` is optional.
 }
 ```
 
+## Intro chat
+
+After "Let's find out", Biscuit texts a friend about the toll text, and the friend explains what scam texts are. It lives under `lesson.introChat`:
+
+```json
+"introChat": {
+  "friend": { "name": "Friend", "image": "assets/characters/friend-placeholder.svg", "voice": { "macVoice": "Samantha", "rate": 170 } },
+  "button": "Start lesson",
+  "messages": [
+    { "from": "biscuit", "pose": "shocked", "text": "Help!! I got this text.", "forwarded": { "sender": "FasTrak", "text": "..." } },
+    { "from": "friend", "text": "Stop! Don't tap that link." }
+  ]
+}
+```
+
+- `from` is `"biscuit"` or `"friend"`. Biscuit's messages can set his `pose`.
+- `forwarded` is optional and shows a quoted text inside the message.
+- `source` is optional and is never shown. Use it to note where a fact came from. The $470 million line cites the [FTC's April 2025 Data Spotlight](https://www.ftc.gov/news-events/data-visualizations/data-spotlight/2025/04/top-text-scams-2024).
+- The last message turns into the `button` that starts the lesson.
+
+The friend is a placeholder until the team's own character is ready. To swap it in, change `friend.name` and `friend.image`.
+
+Each message waits for its voice clip, or for enough reading time if sound is off, whichever is longer. Tapping the chat jumps to the next message, and "Skip intro" goes straight to the lesson.
+
+## Voice
+
+Biscuit reads his intro and outro lines, every feedback line, and his half of the intro chat. The friend reads the other half. The clips are made on a Mac with the built-in `say` voices:
+
+```sh
+python3 tools/make_voice.py
+```
+
+Run it again whenever you change any of those lines in `lesson.json`. It makes clips for new lines, deletes clips for lines that no longer exist, and rewrites `assets/voice/manifest.json`, which the page uses to find each clip. A line without a clip simply plays silently.
+
+- Change the voices with `character.voice` and `introChat.friend.voice`. Run `say -v '?'` to list the voices on your Mac.
+- `lesson.pronunciations` fixes words the voice says wrong. For example, it says "7726" as the digits "7 7 2 6".
+
+To use real recordings, replace a clip file in `assets/voice/` with your own audio under the same name. Look up a line's file name in `manifest.json`, and update its `seconds` so the intro chat waits the right amount of time.
+
+## Sounds
+
+`lesson.sounds` has a slot for each sound effect: `tap`, `correct`, `incorrect`, `match`, `combo`, `message`, and `complete`. An empty slot uses the built-in synthesized sound. To use a recorded sound, put the file in the folder and add its path:
+
+```json
+"sounds": { "correct": "assets/sounds/correct.mp3" }
+```
+
+The `combo` sound plays at 5 and 10 correct answers in a row.
+
 ## Swap Biscuit's art
 
 The code never draws Biscuit itself. Every image comes from the paths in `lesson.character.poses`:
@@ -189,5 +242,5 @@ Use square images with transparent backgrounds. The lesson shows them at about 1
 
 - Number keys pick an option. In match-pairs, the left column is numbered first, then the right. In word-bank, the numbers follow the tile bank in order.
 - Enter checks the answer, and Enter again continues.
-- The speaker button in the top bar turns sound effects on and off.
+- The speaker button in the top bar turns sound effects and voices on and off. The speaker in Biscuit's intro speech bubble plays that line.
 - If the device is set to reduce motion, the lesson turns off the shake, hop, and confetti animations.

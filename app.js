@@ -1,7 +1,11 @@
 import { el, icon, renderExercise, restartAnimation } from "./exercises.js";
-import { isSoundEnabled, playSound, setSoundEnabled } from "./sounds.js";
+import { createIntroChat } from "./intro-chat.js";
+import { configureSoundFiles, isSoundEnabled, playSound, playVoice, setSoundEnabled, stopVoice } from "./sounds.js";
 
 const PRAISE_HEADINGS = ["Nice!", "Great job!", "Amazing!", "You got it!"];
+const COMBO_MILESTONES = new Set([5, 10]);
+const FEEDBACK_VOICE_DELAY_MS = 350;
+const OUTRO_VOICE_DELAY_MS = 900;
 const HOP_POSES = new Set(["happy", "celebrate"]);
 const BADGES = {
   replay: { emoji: "🔁", text: "Previous mistake" },
@@ -16,6 +20,7 @@ const announcer = document.getElementById("announcer");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 let lesson = null;
+let voiceManifest = {};
 let session = null;
 let primaryAction = null;
 
@@ -24,7 +29,8 @@ start();
 
 async function start() {
   try {
-    lesson = await loadLesson();
+    [lesson, voiceManifest] = await Promise.all([loadLesson(), loadVoiceManifest()]);
+    configureSoundFiles(lesson.lesson.sounds);
     showIntro();
   } catch (error) {
     console.error(error);
@@ -36,6 +42,31 @@ async function loadLesson() {
   const response = await fetch("./lesson.json", { cache: "no-cache" });
   if (!response.ok) throw new Error(`lesson.json returned ${response.status}`);
   return response.json();
+}
+
+async function loadVoiceManifest() {
+  try {
+    const response = await fetch("./assets/voice/manifest.json", { cache: "no-cache" });
+    return response.ok ? await response.json() : {};
+  } catch {
+    return {};
+  }
+}
+
+function voiceFor(text) {
+  return voiceManifest[text] ?? null;
+}
+
+function poseSource(pose) {
+  const { poses } = lesson.lesson.character;
+  return poses[pose] ?? poses.idle;
+}
+
+function speakLater(text, delay) {
+  const file = voiceFor(text)?.file;
+  if (!file) return;
+  const timer = setTimeout(() => playVoice(file), delay);
+  if (session) session.voiceTimer = timer;
 }
 
 function showLoadError() {
@@ -64,7 +95,11 @@ function setPose(image, pose) {
 }
 
 function speechBubble(text, variant) {
-  return el("div", { class: `bubble ${variant}` }, el("p", {}, text));
+  const voice = voiceFor(text);
+  const listenButton = voice
+    ? el("button", { type: "button", class: "icon-button bubble-listen", "aria-label": "Hear Biscuit say this", onClick: () => playVoice(voice.file) }, icon("soundOn"))
+    : null;
+  return el("div", { class: `bubble ${variant}` }, el("p", {}, text), listenButton);
 }
 
 function disclaimer() {
@@ -86,13 +121,31 @@ function showIntro() {
       el("div", { class: "character-stage" },
         speechBubble(intro.speech, "bubble-above"),
         characterImage(intro.pose, "biscuit-large")),
-      el("button", { type: "button", class: "btn btn-primary btn-wide", onClick: startLesson }, intro.button)),
+      el("button", { type: "button", class: "btn btn-primary btn-wide", onClick: showIntroChat }, intro.button)),
     disclaimer()));
-  primaryAction = startLesson;
+  primaryAction = showIntroChat;
+}
+
+function showIntroChat() {
+  if (!lesson.lesson.introChat?.messages?.length) return startLesson();
+  stopVoice();
+  const introChat = createIntroChat({
+    lesson,
+    voiceFor,
+    poseSource,
+    soundToggle: soundToggle(),
+    reducedMotion: reducedMotion.matches,
+    onFinish: startLesson,
+  });
+  appRoot.replaceChildren(introChat.root);
+  introChat.root.focus({ preventScroll: true });
+  introChat.start();
+  primaryAction = introChat.handleEnter;
 }
 
 function startLesson() {
-  session = { step: 0, results: [], praiseIndex: 0, phase: "answering", exercise: null, question: null, image: null };
+  stopVoice();
+  session = { step: 0, results: [], praiseIndex: 0, streak: 0, voiceTimer: null, phase: "answering", exercise: null, question: null, image: null };
   session.shell = buildLessonShell();
   appRoot.replaceChildren(session.shell.root);
   showQuestion();
@@ -221,19 +274,35 @@ function handleSkip() {
   finishQuestion({ correct: false, chosenFeedback: null });
 }
 
-function finishQuestion({ correct, chosenFeedback }) {
+function finishQuestion({ correct, almost, chosenFeedback }) {
   if (session.phase !== "answering") return;
   session.phase = "feedback";
   const { question, exercise } = session;
   const correctAnswer = exercise.correctAnswer();
   const feedback = question.feedback[correct ? "correct" : "incorrect"];
+  const text = correct ? feedback.text : chosenFeedback ?? feedback.text;
+  session.streak = correct ? session.streak + 1 : 0;
+  const isCombo = correct && COMBO_MILESTONES.has(session.streak);
 
   session.results.push({ question, correct, correctAnswer });
   setPose(session.image, feedback.pose);
-  playSound(correct ? "correct" : "incorrect");
+  playSound(feedbackSound(correct, isCombo));
   updateCheckButton();
-  showSheet({ correct, correctAnswer, text: correct ? feedback.text : chosenFeedback ?? feedback.text });
+  showSheet({ correct, almost, correctAnswer, text, heading: sheetHeading(correct, almost, isCombo) });
+  speakLater(text, FEEDBACK_VOICE_DELAY_MS);
   primaryAction = advance;
+}
+
+function feedbackSound(correct, isCombo) {
+  if (!correct) return "incorrect";
+  return isCombo ? "combo" : "correct";
+}
+
+function sheetHeading(correct, almost, isCombo) {
+  if (!correct) return "Not quite";
+  if (almost) return "Almost!";
+  if (isCombo) return `${session.streak} in a row!`;
+  return nextPraise();
 }
 
 function nextPraise() {
@@ -242,9 +311,8 @@ function nextPraise() {
   return heading;
 }
 
-function showSheet({ correct, correctAnswer, text }) {
+function showSheet({ correct, almost, correctAnswer, text, heading }) {
   const { sheet, sheetContent, bottomBar, main } = session.shell;
-  const heading = correct ? nextPraise() : "Not quite";
   const continueButton = el("button", { type: "button", class: `btn ${correct ? "btn-primary" : "btn-danger"} sheet-button`, onClick: advance },
     correct ? "Continue" : "Got it");
 
@@ -253,14 +321,16 @@ function showSheet({ correct, correctAnswer, text }) {
       el("span", { class: "sheet-icon" }, icon(correct ? "check" : "close")),
       el("div", { class: "sheet-text" },
         el("h2", { class: "sheet-heading" }, heading),
-        correct ? null : answerBlock(correctAnswer),
+        almost ? el("p", { class: "sheet-almost" }, almost) : null,
+        correct && !almost ? null : answerBlock(correctAnswer),
         el("p", { class: "sheet-feedback" }, text))),
     continueButton);
 
   sheet.dataset.state = correct ? "correct" : "incorrect";
   bottomBar.inert = true;
   main.style.setProperty("--sheet-space", `${sheet.offsetHeight}px`);
-  announce([heading, correct ? "" : `Correct answer: ${[correctAnswer].flat().join(", ")}.`, text].join(" "));
+  const answerNote = correct && !almost ? "" : `Correct answer: ${[correctAnswer].flat().join(", ")}.`;
+  announce([heading, almost ?? "", answerNote, text].join(" "));
   continueButton.focus({ preventScroll: true });
 }
 
@@ -280,6 +350,8 @@ function hideSheet() {
 
 function advance() {
   if (session.phase !== "feedback") return;
+  clearTimeout(session.voiceTimer);
+  stopVoice();
   session.step += 1;
   updateProgress();
   if (session.step >= totalSteps()) showComplete();
@@ -317,6 +389,7 @@ function showComplete() {
   appRoot.querySelector(".screen-complete").focus({ preventScroll: true });
   restartAnimation(image, "is-hopping");
   playSound("complete");
+  speakLater(outro.speech, OUTRO_VOICE_DELAY_MS);
   launchConfetti(confetti);
   primaryAction = startLesson;
 }
