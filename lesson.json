@@ -12,16 +12,6 @@
         "sad": "assets/characters/biscuit-sad.svg",
         "shocked": "assets/characters/biscuit-shocked.svg",
         "celebrate": "assets/characters/biscuit-celebrate.svg"
-      },
-      "voice": {
-        "macVoice": "Rocko (English (US))",
-        "rate": 185
-      }
-    },
-    "narrator": {
-      "voice": {
-        "macVoice": "Shelley (English (US))",
-        "rate": 165
       }
     },
     "intro": {
@@ -31,12 +21,8 @@
     },
     "introChat": {
       "friend": {
-        "name": "Friend",
-        "image": "assets/characters/friend-placeholder.svg",
-        "voice": {
-          "macVoice": "Samantha",
-          "rate": 170
-        }
+        "name": "Duo",
+        "image": "assets/characters/friend-placeholder.svg"
       },
       "button": "Start lesson",
       "messages": [
@@ -104,11 +90,6 @@
       "combo": "",
       "message": "",
       "complete": ""
-    },
-    "pronunciations": {
-      "7726": "7 7 2 6",
-      "dmv-ca-notice.info": "D M V dash C A dash notice dot info",
-      "CA DMV": "California D M V"
     },
     "ui": {
       "praise": [
@@ -231,10 +212,10 @@
       "id": "q4",
       "type": "real-or-scam",
       "concept": "legit",
-      "prompt": "Biscuit ordered a toy yesterday. Now he gets this text. Real or scam?",
+      "prompt": "{name} ordered a toy yesterday. Now he gets this text. Real or scam?",
       "context": {
         "emoji": "📦",
-        "label": "Biscuit's order",
+        "label": "{name}'s order",
         "text": "1 Squeaky Duck chew toy, shipped"
       },
       "message": {
@@ -257,7 +238,7 @@
       "id": "q5",
       "type": "chat-reply",
       "concept": "code",
-      "prompt": "What should Biscuit do?",
+      "prompt": "What should {name} do?",
       "message": {
         "sender": "Golden Bank Fraud Team",
         "text": "We stopped a weird $892 charge. To unlock your account, text us the 6-digit code we just sent you."
@@ -294,7 +275,7 @@
       "id": "q6",
       "type": "word-bank",
       "concept": "code",
-      "prompt": "Build Biscuit's new rule.",
+      "prompt": "Build {name}'s new rule.",
       "answer": [
         "Never",
         "share",
@@ -334,7 +315,7 @@
       "id": "q7",
       "type": "image-choice",
       "concept": "safe-move",
-      "prompt": "What should Biscuit do?",
+      "prompt": "What should {name} do?",
       "message": {
         "sender": "USPS",
         "text": "Your package can't be delivered. Update your address: usps-redelivery.net"
@@ -374,7 +355,7 @@
       "id": "q8",
       "type": "multiple-choice",
       "concept": "report",
-      "prompt": "Biscuit found a scam text. What should he do next?",
+      "prompt": "{name} found a scam text. What should he do next?",
       "options": [
         {
           "id": "a",
@@ -542,21 +523,21 @@
         "id": "q10-legit",
         "type": "real-or-scam",
         "concept": "legit",
-        "prompt": "Biscuit just booked a vet checkup. Real or scam?",
+        "prompt": "{name} just booked a vet checkup. Real or scam?",
         "context": {
           "emoji": "📅",
-          "label": "Biscuit's calendar",
+          "label": "{name}'s calendar",
           "text": "Vet checkup, Tuesday 3:00 PM"
         },
         "message": {
           "sender": "Happy Paws Vet",
-          "text": "Reminder: Biscuit's checkup is Tuesday at 3:00 PM. See you then!"
+          "text": "Reminder: {name}'s checkup is Tuesday at 3:00 PM. See you then!"
         },
         "answer": "real",
         "feedback": {
           "correct": {
             "pose": "happy",
-            "text": "Real! It matches what Biscuit did, and it asks for nothing."
+            "text": "Real! It matches what {name} did, and it asks for nothing."
           },
           "incorrect": {
             "pose": "idle",
@@ -568,7 +549,7 @@
         "id": "q10-code",
         "type": "chat-reply",
         "concept": "code",
-        "prompt": "What should Biscuit do?",
+        "prompt": "What should {name} do?",
         "message": {
           "sender": "Unknown number",
           "text": "Hi! I sent my code to your phone by mistake. Can you text it to me?"
@@ -605,7 +586,7 @@
         "id": "q10-safe-move",
         "type": "image-choice",
         "concept": "safe-move",
-        "prompt": "What should Biscuit do?",
+        "prompt": "What should {name} do?",
         "message": {
           "sender": "Golden Bank",
           "text": "Your card is frozen. Unfreeze it here: goldenbank-unlock.co"

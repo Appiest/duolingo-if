@@ -1,6 +1,6 @@
 import { el, icon, renderExercise, restartAnimation } from "./exercises.js";
 import { createIntroChat } from "./intro-chat.js";
-import { configureSoundFiles, isSoundEnabled, playSound, playVoice, playVoices, setSoundEnabled, stopVoice } from "./sounds.js";
+import { configureSoundFiles, installAudioUnlock, isSoundEnabled, playSound, playVoice, playVoices, setSoundEnabled, stopVoice } from "./sounds.js";
 
 const DEFAULT_UI = {
   praise: ["Nice!", "Great job!", "Amazing!", "You got it!"],
@@ -31,6 +31,7 @@ let session = null;
 let primaryAction = null;
 
 document.addEventListener("keydown", handleKeydown);
+installAudioUnlock();
 start();
 
 async function start() {
@@ -47,7 +48,17 @@ async function start() {
 async function loadLesson() {
   const response = await fetch("./lesson.json", { cache: "no-cache" });
   if (!response.ok) throw new Error(`lesson.json returned ${response.status}`);
-  return response.json();
+  const data = await response.json();
+  return fillCharacterName(data, data.lesson.character.name);
+}
+
+function fillCharacterName(value, name) {
+  if (typeof value === "string") return value.replaceAll("{name}", name);
+  if (Array.isArray(value)) return value.map((item) => fillCharacterName(item, name));
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, fillCharacterName(item, name)]));
+  }
+  return value;
 }
 
 async function loadVoiceManifest() {

@@ -26,7 +26,7 @@ There is no build step. The page is plain HTML, CSS, and JavaScript modules:
 | `exercises.js` | One render function per exercise type |
 | `intro-chat.js` | The animated text conversation that plays before the lesson |
 | `sounds.js` | Sound effects and voice playback. Every sound can come from a file or fall back to a synthesized version. |
-| `tools/make_voice.py` | Rebuilds the voice clips in `assets/voice/` from `lesson.json` |
+| `tools/record_voices.py` | Opens a page for recording every voice line into `assets/voice/` |
 | `lesson.json` | Every word the learner reads in the lesson |
 | `assets/characters/` | Biscuit's five poses |
 
@@ -34,7 +34,7 @@ There is no build step. The page is plain HTML, CSS, and JavaScript modules:
 
 All lesson text lives in `lesson.json`, so you can change wording without touching code. Save the file and refresh the page.
 
-- `lesson` holds the title, unit, character, intro, intro chat, outro, the four scam `signs`, sound files, and voice pronunciations.
+- `lesson` holds the title, unit, character, intro, intro chat, outro, the four scam `signs`, sound files, and feedback headings.
 - `questions` holds questions 1 to 9, shown in order.
 - `q10` holds the final question. If the learner missed anything in 1 to 9, they get the replay under `q10.replays` whose key matches the `concept` of the **first** question they missed. A perfect run gets `q10.boss` instead.
 
@@ -176,7 +176,7 @@ After "Let's find out", Biscuit texts a friend about the toll text, and the frie
 
 ```json
 "introChat": {
-  "friend": { "name": "Friend", "image": "assets/characters/friend-placeholder.svg", "voice": { "macVoice": "Samantha", "rate": 170 } },
+  "friend": { "name": "Duo", "image": "assets/characters/friend-placeholder.svg" },
   "button": "Start lesson",
   "messages": [
     { "from": "biscuit", "pose": "shocked", "text": "Help!! I got this text.", "forwarded": { "sender": "FasTrak", "text": "..." } },
@@ -190,7 +190,7 @@ After "Let's find out", Biscuit texts a friend about the toll text, and the frie
 - `source` is optional and is never shown. Use it to note where a fact came from. The $470 million line cites the [FTC's April 2025 Data Spotlight](https://www.ftc.gov/news-events/data-visualizations/data-spotlight/2025/04/top-text-scams-2024).
 - The last message turns into the `button` that starts the lesson.
 
-The friend is a placeholder until the team's own character is ready. To swap it in, change `friend.name` and `friend.image`.
+The friend is Duo. `friend.image` still points to a gray placeholder, so drop Duolingo's official Duo artwork into the folder and point `friend.image` at it.
 
 Each message waits for its voice clip, or for enough reading time if sound is off, whichever is longer. Tapping the chat jumps to the next message, and "Skip intro" goes straight to the lesson.
 
@@ -198,26 +198,34 @@ Each message waits for its voice clip, or for enough reading time if sound is of
 
 Three voices speak in the lesson:
 
-- **Biscuit** reads his intro and outro lines, every feedback line, and his half of the intro chat.
-- **The friend** reads the other half of the intro chat.
-- **The narrator** reads each question's prompt when it appears, and the feedback heading ("Great job!", "Not quite", "Almost!", "5 in a row!") just before Biscuit's feedback line. The speaker button in the prompt bubble replays the prompt.
+- **The main character** reads the start and end screen lines, every feedback line, and their half of the intro chat.
+- **Duo** reads the other half of the intro chat.
+- **The narrator** reads each question's prompt when it appears, and the feedback heading ("Great job!", "Not quite", "Almost!", "5 in a row!") just before the character's feedback line. The speaker button in the prompt bubble replays the prompt.
 
-The clips are made on a Mac with the built-in `say` voices:
+The team records every line in a browser page. On a Mac with ffmpeg installed (`brew install ffmpeg`), run:
 
 ```sh
-python3 tools/make_voice.py
+python3 tools/record_voices.py
 ```
 
-Run it again whenever you change any of those lines in `lesson.json`. It makes clips for new lines, deletes clips for lines that no longer exist, and rewrites `assets/voice/manifest.json`, which the page uses to find each clip. A line without a clip simply plays silently.
+That opens http://localhost:8800/tools/recorder/. Each line shows who says it, where it plays, and how the character feels in that moment.
 
-- Change the voices with `character.voice`, `narrator.voice`, and `introChat.friend.voice`. Run `say -v '?'` to list the voices on your Mac.
-- `lesson.pronunciations` fixes words the voice says wrong. For example, it says "7726" as the digits "7 7 2 6".
+- Press Space to start recording and Space again to stop.
+- Your take plays back right away, and P plays it again.
+- Use the arrow keys to move between lines. "Still to record" shows only the lines left to do.
+- Recording a line again replaces the old take.
 
-To use real recordings, replace a clip file in `assets/voice/` with your own audio under the same name. Look up a line's file name in `manifest.json`, and update its `seconds` so the intro chat waits the right amount of time.
+Each take is trimmed, leveled, and saved straight into `assets/voice/`. `assets/voice/manifest.json` updates too, so http://localhost:8800/ plays the lesson with your recordings right away. Commit `assets/voice/` to publish them. A line without a recording plays silently, and the intro chat gives it reading time instead.
+
+When you change a spoken line in `lesson.json`, it shows up in the recorder as not recorded yet, because a take belongs to its exact wording.
+
+## Character name
+
+`{name}` in any line of `lesson.json` is replaced with `lesson.character.name`. To rename the main character, change that one field. The jokes still assume a dog ("I'm a dog", "dog treats", "my paw", "my food bowl"), so rewrite those if your character isn't one.
 
 ## Feedback headings
 
-`lesson.ui` holds the feedback headings. `praise` rotates on correct answers, `incorrect` and `almost` cover the other outcomes, and `combo` replaces praise when the learner reaches a number in `comboMilestones` in a row. `{count}` is filled in with that number. Run the voice script after changing any of these.
+`lesson.ui` holds the feedback headings. `praise` rotates on correct answers, `incorrect` and `almost` cover the other outcomes, and `combo` replaces praise when the learner reaches a number in `comboMilestones` in a row. `{count}` is filled in with that number. Record any heading you change in the recorder.
 
 ## Sounds
 

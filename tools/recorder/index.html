@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Record Voice Lines</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎙️</text></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" />
+    <link rel="stylesheet" href="../../styles.css" />
+    <link rel="stylesheet" href="./recorder.css" />
+    <script type="module" src="./recorder.js"></script>
+  </head>
+  <body>
+    <main class="recorder">
+      <header class="recorder-header">
+        <h1>Record the voice lines</h1>
+        <p class="recorder-count" id="progress-text">Loading lines…</p>
+        <div class="progress" role="progressbar" aria-label="Lines recorded" aria-valuemin="0" id="progress">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </header>
+
+      <div class="recorder-filters" role="group" aria-label="Show lines" id="filters"></div>
+
+      <div class="recorder-body">
+        <section class="take" aria-labelledby="take-line">
+          <div class="take-who">
+            <span class="speaker-dot" id="take-dot" aria-hidden="true"></span>
+            <p class="take-speaker" id="take-speaker"></p>
+          </div>
+          <p class="take-where" id="take-where"></p>
+          <p class="take-line" id="take-line"></p>
+          <p class="take-mood" id="take-mood"></p>
+
+          <div class="take-controls">
+            <button type="button" class="record-button" id="record-button" aria-pressed="false">
+              <span class="record-glyph" aria-hidden="true"></span>
+              <span class="record-label" id="record-label">Record</span>
+            </button>
+            <div class="take-side">
+              <div class="meter" aria-hidden="true"><div class="meter-fill" id="meter-fill"></div></div>
+              <button type="button" class="btn btn-secondary" id="play-button" disabled>Play take</button>
+            </div>
+          </div>
+
+          <p class="take-status" id="take-status" role="status"></p>
+
+          <div class="take-nav">
+            <button type="button" class="btn btn-secondary" id="previous-button">Previous</button>
+            <button type="button" class="btn btn-blue" id="next-button">Next line</button>
+          </div>
+          <p class="take-keys">Press <kbd>Space</kbd> to start and stop recording, <kbd>←</kbd> and <kbd>→</kbd> to move between lines, and <kbd>P</kbd> to play your take.</p>
+        </section>
+
+        <ol class="line-list" id="line-list" aria-label="All lines"></ol>
+      </div>
+    </main>
+  </body>
+</html>

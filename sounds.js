@@ -38,6 +38,22 @@ let currentVoice = null;
 let voiceRequest = 0;
 const bufferCache = new Map();
 
+const UNLOCK_EVENTS = ["pointerdown", "touchend", "keydown", "click"];
+
+export function installAudioUnlock() {
+  if (navigator.audioSession) navigator.audioSession.type = "playback";
+  const unlock = () => {
+    const context = getAudioContext();
+    if (!context) return;
+    const silence = context.createBufferSource();
+    silence.buffer = context.createBuffer(1, 1, context.sampleRate);
+    silence.connect(context.destination);
+    silence.start();
+    if (context.state === "running") UNLOCK_EVENTS.forEach((type) => document.removeEventListener(type, unlock, true));
+  };
+  UNLOCK_EVENTS.forEach((type) => document.addEventListener(type, unlock, true));
+}
+
 export function isSoundEnabled() {
   return soundEnabled;
 }
@@ -103,7 +119,7 @@ function getAudioContext() {
   const AudioContextClass = window.AudioContext || window.webkitAudioContext;
   if (!AudioContextClass) return null;
   audioContext ??= new AudioContextClass();
-  if (audioContext.state === "suspended") audioContext.resume();
+  if (audioContext.state !== "running") audioContext.resume().catch(() => {});
   return audioContext;
 }
 
