@@ -1,61 +1,47 @@
+"use client";
+
+import { DeviceMobile, Flag } from "@phosphor-icons/react";
+import { grid } from "../geometry";
 import { Headline } from "../parts/Headline";
 import { Show } from "../parts/Show";
-import { SourceNote } from "../parts/SourceNote";
 import type { Beat } from "../script";
 
 const GRADES = [1, 2, 3, 4, 5, 6];
-const STRIP = { left: 160, top: 520, column: 260 };
+const STRIP = { top: 600, gap: 24, height: 150 };
+const COLUMN = (grid.width - 5 * STRIP.gap) / 6;
 
-export function NowScene({ beat }: { beat: Beat }) {
-  const typos = beat === "aiTypos";
-  const gap = beat === "gradeGap";
-  return (
-    <>
-      <Headline when={typos}>AI writes scam texts without typos.</Headline>
-      <SourceNote when={typos} keys={["fbiAi"]} />
-
-      <Headline when={gap}>Kids get phones years before their first scam lesson.</Headline>
-      <GradeStrip shown={gap} />
-      <SourceNote when={gap} keys={["pewKidsPhones", "commonSensePhish"]} note="Ages 8–10 are roughly grades 3–5." />
-    </>
-  );
+function columnLeft(grade: number) {
+  return grid.left + (grade - 1) * (COLUMN + STRIP.gap);
 }
 
 function gradeFill(grade: number) {
-  if (grade === 6) return "bg-red";
-  if (grade >= 3) return "bg-green";
-  return "bg-stage-sunken";
+  if (grade === 6) return "bg-red text-white";
+  if (grade >= 3) return "bg-green text-white";
+  return "bg-stage-sunken text-ink-muted";
 }
 
-function GradeStrip({ shown }: { shown: boolean }) {
-  const columnLeft = (grade: number) => STRIP.left + (grade - 1) * STRIP.column;
+export function NowScene({ beat }: { beat: Beat }) {
+  const gap = beat === "gradeGap";
   return (
     <>
-      <Show when={shown} delay={0.15} className="absolute" style={{ left: columnLeft(3), top: STRIP.top - 190, width: STRIP.column * 3 - 20 }}>
-        <div className="rounded-card bg-green-wash px-8 py-6">
-          <p className="text-[56px] leading-none font-black text-green-text">29%</p>
-          <p className="mt-2 text-caption font-extrabold text-green-text">of kids ages 8–10 have their own smartphone</p>
-        </div>
-      </Show>
-      <Show when={shown} delay={0.55} className="absolute" style={{ left: columnLeft(6), top: STRIP.top - 190, width: STRIP.column - 20 }}>
-        <div className="rounded-card bg-red-wash px-6 py-6">
-          <p className="text-[40px] leading-none font-black text-red-text">Grade 6</p>
-          <p className="mt-2 text-caption font-extrabold text-red-text">first phishing lesson</p>
-        </div>
-      </Show>
+      <Headline when={beat === "aiTypos"}>AI fixes the typos</Headline>
+
+      <Headline when={gap}>Phones come first</Headline>
       {GRADES.map((grade, index) => (
-        <Show key={grade} when={shown} delay={index * 0.05} rise={10} className="absolute" style={{ left: columnLeft(grade), top: STRIP.top, width: STRIP.column - 20 }}>
-          <div className={`flex h-[150px] items-center justify-center rounded-[24px] ${gradeFill(grade)}`}>
-            <p className={`text-[44px] font-black ${grade >= 3 ? "text-white" : "text-ink-muted"}`}>Grade {grade}</p>
+        <Show key={grade} when={gap} delay={index * 0.06} rise={12} className="absolute" style={{ left: columnLeft(grade), top: STRIP.top, width: COLUMN }}>
+          <div className={`flex items-center justify-center rounded-[28px] ${gradeFill(grade)}`} style={{ height: STRIP.height }}>
+            <p className="text-[48px] font-black">Grade {grade}</p>
           </div>
         </Show>
       ))}
-      <Show when={shown} delay={0.9} className="absolute" style={{ left: columnLeft(3), top: STRIP.top + 190, width: STRIP.column * 4 - 20 }}>
-        <div className="flex items-center gap-4">
-          <div className="h-2 flex-1 rounded bg-ink" />
-          <p className="text-lede font-black text-ink">a gap of up to 3 years</p>
-          <div className="h-2 flex-1 rounded bg-ink" />
-        </div>
+      {[3, 4, 5].map((grade, index) => (
+        <Show key={grade} when={gap} delay={0.5 + index * 0.12} className="absolute flex justify-center" style={{ left: columnLeft(grade), top: STRIP.top - 190, width: COLUMN }}>
+          <DeviceMobile size={150} weight="fill" className="text-green" />
+        </Show>
+      ))}
+      <Show when={gap} delay={1} className="absolute flex flex-col items-center" style={{ left: columnLeft(6), top: STRIP.top - 250, width: COLUMN }}>
+        <Flag size={130} weight="fill" className="text-red" />
+        <p className="mt-2 text-center text-body leading-tight font-black text-red-text">First scam lesson</p>
       </Show>
     </>
   );

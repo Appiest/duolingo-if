@@ -30,12 +30,12 @@ const TYPO_ORDER = new Map<Word, number>(
 const HIDDEN: Placement = { x: 960, y: 560, scale: 0.6, opacity: 0 };
 
 const PLACEMENTS: Partial<Record<Beat, Placement>> = {
-  skitText: { x: 960, y: 590, scale: 1.15 },
-  fbiWarning: { x: 600, y: 610, scale: 0.92 },
+  skitText: { x: 960, y: 540, scale: 1.3 },
+  fbiWarning: { x: 530, y: 540, scale: 0.92 },
   topContact: { x: 960, y: 560, scale: 0.3, opacity: 0 },
-  aiTypos: { x: 960, y: 650, scale: 1.1 },
-  pawnzyLesson: { x: 1200, y: 600, scale: 1 },
-  fourPs: { x: 960, y: 520, scale: 0.8 },
+  aiTypos: { x: 960, y: 610, scale: 1.25 },
+  pawnzyLesson: { x: 1270, y: 590, scale: 1.05 },
+  fourPs: { x: 960, y: 500, scale: 0.85 },
 };
 
 const TAGGED_BEATS = new Set<Beat>(["pawnzyLesson", "fourPs"]);
@@ -48,6 +48,7 @@ export function ScamBubble({ beat }: { beat: Beat }) {
   return (
     <motion.div
       className="pointer-events-none absolute left-0 top-0"
+      style={{ transformOrigin: "0px 0px" }}
       initial={false}
       animate={{ x: place.x, y: place.y, scale: place.scale, opacity: place.opacity ?? 1 }}
       transition={sceneMove}
