@@ -4,14 +4,14 @@
     "title": "Real or Scam? The Surprise Text",
     "unit": "Scam Smarts, Unit 1",
     "character": {
-      "name": "Biscuit",
-      "description": "A golden retriever who trusts everyone. Once almost paid a fake toll. Has never been in a car.",
+      "name": "Pawnzy",
+      "description": "A raccoon who trusts everyone. Once almost paid a fake toll. Has never been in a car.",
       "poses": {
-        "idle": "assets/characters/biscuit-idle.svg",
-        "happy": "assets/characters/biscuit-happy.svg",
-        "sad": "assets/characters/biscuit-sad.svg",
-        "shocked": "assets/characters/biscuit-shocked.svg",
-        "celebrate": "assets/characters/biscuit-celebrate.svg"
+        "idle": "assets/characters/pawnzy-idle.svg",
+        "happy": "assets/characters/pawnzy-happy.svg",
+        "sad": "assets/characters/pawnzy-sad.svg",
+        "shocked": "assets/characters/pawnzy-shocked.svg",
+        "celebrate": "assets/characters/pawnzy-celebrate.svg"
       }
     },
     "intro": {
@@ -56,7 +56,7 @@
         {
           "from": "biscuit",
           "pose": "shocked",
-          "text": "$470 million?! That's a LOT of dog treats."
+          "text": "$470 million?! That's a LOT of trash-can snacks."
         },
         {
           "from": "friend",
@@ -156,7 +156,7 @@
     "outro": {
       "pose": "celebrate",
       "title": "Lesson complete!",
-      "speech": "You saved my $4.15! I'm spending it on treats. Same time tomorrow?",
+      "speech": "You saved my $4.15! I'm spending it on snacks. Same time tomorrow?",
       "rule": "Got a surprise text that wants something fast? Stop! Show a grown-up, or check the real app yourself.",
       "xp": 15
     },
@@ -301,7 +301,7 @@
       "context": {
         "emoji": "📦",
         "label": "{name}'s order",
-        "text": "1 Squeaky Duck chew toy, shipped"
+        "text": "1 shiny spoon, shipped"
       },
       "message": {
         "sender": "USPS",
@@ -388,7 +388,7 @@
       "feedback": {
         "correct": {
           "pose": "happy",
-          "text": "Never share a code with anyone who texts you. I'm writing it on my food bowl."
+          "text": "Never share a code with anyone who texts you. I'm writing it on my trash can lid."
         },
         "incorrect": {
           "pose": "sad",
@@ -517,7 +517,7 @@
       "feedback": {
         "correct": {
           "pose": "celebrate",
-          "text": "You found all 4! Also, I'm a dog. I don't even have a license."
+          "text": "You found all 4! Also, I'm a raccoon. I don't even have a license."
         },
         "incorrect": {
           "pose": "sad",

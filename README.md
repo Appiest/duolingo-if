@@ -1,6 +1,6 @@
 # Real or Scam? A lesson concept
 
-This is a mock Duolingo-style lesson built for the "New World Character: Lesson Concept" assignment in a USC Iovine and Young Academy class. It introduces **Biscuit**, a golden retriever who trusts everyone, and teaches beginners how to spot scam texts in a 10-question lesson.
+This is a mock Duolingo-style lesson built for the "New World Character: Lesson Concept" assignment in a USC Iovine and Young Academy class. It introduces **Pawnzy**, a raccoon who trusts everyone, and teaches beginners how to spot scam texts in a 10-question lesson.
 
 It is a student concept and is not affiliated with or endorsed by Duolingo. It uses no Duolingo logos, characters, fonts, or sounds.
 
@@ -28,7 +28,7 @@ There is no build step. The page is plain HTML, CSS, and JavaScript modules:
 | `sounds.js` | Sound effects and voice playback. Every sound can come from a file or fall back to a synthesized version. |
 | `tools/record_voices.py` | Opens a page for recording every voice line into `assets/voice/` |
 | `lesson.json` | Every word the learner reads in the lesson |
-| `assets/characters/` | Biscuit's five poses |
+| `assets/characters/` | Pawnzy's five poses and Duo |
 
 ## Edit the lesson
 
@@ -52,7 +52,7 @@ Every question has `id`, `type`, `concept`, `prompt`, and `feedback`:
 A question can also include `context`, a small card shown above the phone. `emoji` is optional:
 
 ```json
-"context": { "emoji": "📦", "label": "Biscuit's order", "text": "1x Squeaky Duck Chew Toy, shipped" }
+"context": { "emoji": "📦", "label": "{name}'s order", "text": "1x Squeaky Duck Chew Toy, shipped" }
 ```
 
 Messages use `sender` and `text`. Anything that looks like a web address (ending in `.com`, `.net`, `.info`, `.co`, and so on) is styled as a link but can't be clicked.
@@ -113,7 +113,7 @@ The learner picks a reply, and it appears in the conversation after checking. `a
 ```json
 {
   "type": "chat-reply",
-  "prompt": "What should Biscuit reply?",
+  "prompt": "What should {name} do?",
   "message": { "sender": "Golden Bank", "text": "Reply with the code we sent." },
   "options": [
     { "id": "a", "text": "Sure! It's 482910", "feedback": "A real bank never asks for that code." },
@@ -132,7 +132,7 @@ Judging is forgiving for young learners. If the sentence is right except for one
 ```json
 {
   "type": "word-bank",
-  "prompt": "Build Biscuit's new rule.",
+  "prompt": "Build {name}'s new rule.",
   "answer": ["Never", "share", "a", "code"],
   "tiles": ["code", "a", "Never", "share", "always"]
 }
@@ -145,7 +145,7 @@ Three big cards, each with an `emoji` and a `label`. `message` is optional.
 ```json
 {
   "type": "image-choice",
-  "prompt": "What should Biscuit do?",
+  "prompt": "What should {name} do?",
   "options": [
     { "id": "a", "emoji": "🔗", "label": "Tap the link", "feedback": "That link goes to the scammer." },
     { "id": "b", "emoji": "📲", "label": "Open the USPS app himself" }
@@ -172,11 +172,11 @@ A numbered list of options. `message` is optional.
 
 ## Intro chat
 
-After "Let's find out", Biscuit texts a friend about the toll text, and the friend explains what scam texts are. It lives under `lesson.introChat`:
+After "Let's find out", Pawnzy texts Duo about the toll text, and Duo explains what scam texts are. It lives under `lesson.introChat`:
 
 ```json
 "introChat": {
-  "friend": { "name": "Duo", "image": "assets/characters/friend-placeholder.svg" },
+  "friend": { "name": "Duo", "image": "assets/characters/duo.png" },
   "button": "Start lesson",
   "messages": [
     { "from": "biscuit", "pose": "shocked", "text": "Help!! I got this text.", "forwarded": { "sender": "FasTrak", "text": "..." } },
@@ -185,12 +185,12 @@ After "Let's find out", Biscuit texts a friend about the toll text, and the frie
 }
 ```
 
-- `from` is `"biscuit"` or `"friend"`. Biscuit's messages can set his `pose`.
+- `from` is `"biscuit"` for the main character (the key kept its original name) or `"friend"` for Duo. The main character's messages can set a `pose`.
 - `forwarded` is optional and shows a quoted text inside the message.
 - `source` is optional and is never shown. Use it to note where a fact came from. The $470 million line cites the [FTC's April 2025 Data Spotlight](https://www.ftc.gov/news-events/data-visualizations/data-spotlight/2025/04/top-text-scams-2024).
 - The last message turns into the `button` that starts the lesson.
 
-The friend is Duo. `friend.image` still points to a gray placeholder, so drop Duolingo's official Duo artwork into the folder and point `friend.image` at it.
+The friend is Duo, drawn from Duolingo's artwork at `assets/characters/duo.png`.
 
 Each message waits for its voice clip, or for enough reading time if sound is off, whichever is longer. Tapping the chat jumps to the next message, and "Skip intro" goes straight to the lesson.
 
@@ -234,7 +234,9 @@ When you change a spoken line in `lesson.json`, it shows up in the recorder as n
 
 ## Character name
 
-`{name}` in any line of `lesson.json` is replaced with `lesson.character.name`. To rename the main character, change that one field. The jokes still assume a dog ("I'm a dog", "dog treats", "my paw", "my food bowl"), so rewrite those if your character isn't one.
+`{name}` in any line of `lesson.json` is replaced with `lesson.character.name`. To rename the main character, change that one field. A few jokes assume a raccoon ("I'm a raccoon", "trash-can snacks", "my trash can lid"), so rewrite those if the character changes species.
+
+The recorder ties each take to its speaker and exact wording. After a rename, re-record the lines that say the name. Every other take can be carried over to the new name instead of re-recorded.
 
 ## Feedback headings
 
@@ -250,28 +252,28 @@ When you change a spoken line in `lesson.json`, it shows up in the recorder as n
 
 The `combo` sound plays at each number in `ui.comboMilestones`.
 
-## Swap Biscuit's art
+## Swap Pawnzy's art
 
-The code never draws Biscuit itself. Every image comes from the paths in `lesson.character.poses`:
+The code never draws Pawnzy itself. Every image comes from the paths in `lesson.character.poses`:
 
 ```
-assets/characters/biscuit-idle.svg
-assets/characters/biscuit-happy.svg
-assets/characters/biscuit-sad.svg
-assets/characters/biscuit-shocked.svg
-assets/characters/biscuit-celebrate.svg
+assets/characters/pawnzy-idle.svg
+assets/characters/pawnzy-happy.svg
+assets/characters/pawnzy-sad.svg
+assets/characters/pawnzy-shocked.svg
+assets/characters/pawnzy-celebrate.svg
 ```
 
 You can swap the art in either of two ways:
 
 - Replace those five files with your own art and keep the same names.
-- Put your files anywhere in the folder, such as `assets/characters/biscuit-happy.png`, and update the matching paths in `lesson.json`.
+- Put your files anywhere in the folder, such as `assets/characters/pawnzy-happy.png`, and update the matching paths in `lesson.json`.
 
-Use square images with transparent backgrounds. The lesson shows them at about 110px and the intro and complete screens show them at 180px, so export at 400px or larger for sharp phone screens. Keep paths relative, with no leading `/`, because the site is served from the `/duolingo-if/` subfolder.
+The current poses are placeholders drawn by `tools/make_placeholder_art.py`. Use square images with transparent backgrounds. The lesson shows them at about 110px and the intro and complete screens show them at 180px, so export at 400px or larger for sharp phone screens. Keep paths relative, with no leading `/`, because the site is served from the `/duolingo-if/` subfolder.
 
 ## Controls
 
 - Number keys pick an option. In match-pairs, the left column is numbered first, then the right. In word-bank, the numbers follow the tile bank in order.
 - Enter checks the answer, and Enter again continues.
-- The speaker button in the top bar turns sound effects and voices on and off. The speaker in Biscuit's intro speech bubble plays that line.
+- The speaker button in the top bar turns sound effects and voices on and off. The speaker in Pawnzy's intro speech bubble plays that line.
 - If the device is set to reduce motion, the lesson turns off the shake, hop, and confetti animations.

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Pawnzy, celebrate</title>
+  <path d="M44 80 L56 30 Q60 23 67 30 L94 62 Z" fill="#858B94"/>
+  <path d="M156 80 L144 30 Q140 23 133 30 L106 62 Z" fill="#858B94"/>
+  <path d="M55 70 L61 42 L82 64 Z" fill="#3F434A"/>
+  <path d="M145 70 L139 42 L118 64 Z" fill="#3F434A"/>
+  <ellipse cx="100" cy="112" rx="66" ry="56" fill="#A3A9B1"/>
+  <ellipse cx="56" cy="132" rx="22" ry="18" fill="#E8EBEF"/>
+  <ellipse cx="144" cy="132" rx="22" ry="18" fill="#E8EBEF"/>
+  <path d="M92 58 Q100 54 108 58 L104 84 Q100 88 96 84 Z" fill="#6F757E"/>
+  <path d="M38 104 Q40 84 64 84 Q86 84 96 98 Q100 102 104 98 Q114 84 136 84 Q160 84 162 104 Q160 122 136 122 Q114 122 104 112 Q100 108 96 112 Q86 122 64 122 Q40 122 38 104 Z" fill="#2F3238"/>
+  <ellipse cx="100" cy="142" rx="28" ry="22" fill="#F2F4F6"/>
+  <ellipse cx="100" cy="128" rx="10" ry="7" fill="#1C1D20"/>
+  <rect x="20" y="16" width="12" height="18" rx="3" fill="#58CC02" transform="rotate(-24 26 25)"/>
+  <rect x="166" y="14" width="12" height="18" rx="3" fill="#1CB0F6" transform="rotate(28 172 23)"/>
+  <circle cx="34" cy="52" r="6" fill="#FF4B4B"/>
+  <circle cx="170" cy="52" r="5" fill="#CE82FF"/>
+  <rect x="94" y="4" width="10" height="16" rx="3" fill="#FF9600" transform="rotate(14 99 12)"/>
+  <path d="M63 106 Q72 95 81 106M119 106 Q128 95 137 106" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" fill="none"/>
+  <path d="M85 139 Q100 143 115 139 Q113 160 100 160 Q87 160 85 139 Z" fill="#1C1D20"/>
+  <path d="M91 153 Q100 146 109 153 Q107 160 100 160 Q93 160 91 153 Z" fill="#FF7A8A"/>
+</svg>
