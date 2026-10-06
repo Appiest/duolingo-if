@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme static {
+  --color-stage: #ffffff;
+  --color-stage-sunken: #f2f4f5;
+  --color-ink: #3c3c3c;
+  --color-ink-muted: #6f6f6f;
+  --color-ink-faint: #afafaf;
+  --color-line: #e5e5e5;
+  --color-green: #58cc02;
+  --color-green-edge: #58a700;
+  --color-green-text: #3f7d00;
+  --color-green-wash: #d7ffb8;
+  --color-red: #ff4b4b;
+  --color-red-text: #c42020;
+  --color-red-wash: #ffdfe0;
+  --color-blue: #1cb0f6;
+  --color-blue-text: #0d6f9e;
+  --color-sms-in: #e9e9eb;
+  --color-sms-out: #1677c9;
+  --color-sms-link: #0b63c4;
+  --color-p-pretend: #8e44c9;
+  --color-p-pretend-wash: #f3e8ff;
+  --color-p-problem: #c2410c;
+  --color-p-problem-wash: #ffedd5;
+  --color-p-pressure: #0e7ab8;
+  --color-p-pressure-wash: #dcf1fc;
+  --color-p-pay: #a16207;
+  --color-p-pay-wash: #fef3c7;
+  --color-rehearsal: #1f2328;
+
+  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+
+  --text-poster: 220px;
+  --text-poster--line-height: 0.9;
+  --text-headline: 104px;
+  --text-headline--line-height: 1;
+  --text-title: 72px;
+  --text-title--line-height: 1.05;
+  --text-lede: 48px;
+  --text-lede--line-height: 1.2;
+  --text-body: 36px;
+  --text-body--line-height: 1.35;
+  --text-caption: 28px;
+  --text-caption--line-height: 1.3;
+  --text-source: 22px;
+  --text-source--line-height: 1.35;
+
+  --radius-bubble: 44px;
+  --radius-card: 32px;
+
+  --ease-scene: cubic-bezier(0.2, 0, 0, 1);
+}
+
+html,
+body {
+  background: var(--color-stage);
+  color: var(--color-ink);
+}
+
+@media print {
+  * {
+    box-shadow: none !important;
+  }
+}

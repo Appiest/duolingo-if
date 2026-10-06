@@ -6,6 +6,19 @@ It is a student concept and is not affiliated with or endorsed by Duolingo. It u
 
 Live: https://appiest.github.io/duolingo-if/
 
+## Presentation deck
+
+The two-minute deck that follows the skit lives in `deck/` and is published at https://appiest.github.io/duolingo-if/present/.
+
+- **Present:** open the link, press F for fullscreen, and use the arrow keys, Space or a click to advance. Each slide moves through its beats, and the URL remembers where you are.
+- **Rehearse:** press N to show or hide the rehearsal strip. It shows the speaker's line and "Slide x, beat y" in the corners, and your browser remembers the choice. It never prints.
+- **Facts:** https://appiest.github.io/duolingo-if/present/facts/ lists every number on the slides, what it counts, the source's exact words with a link, and likely audience questions with answers.
+- **PDF:** https://appiest.github.io/duolingo-if/present/pawnzy-deck.pdf has one page per beat.
+
+To change the deck, edit the spoken lines in `deck/src/deck/cues.ts`, the sources in `deck/src/deck/sources.ts`, and the facts page in `deck/src/deck/facts.ts`. Speakers are placeholders ("Speaker A" to "Speaker D") until you assign names. To work on it locally, run `npm install` once in `deck/`, then `npm run dev` and open http://localhost:3000. The deck uses the lesson's character art from `assets/characters/`, so swapping Pawnzy's art updates both.
+
+Every push to `main` rebuilds the deck and publishes it with the lesson through GitHub Actions (`.github/workflows/pages.yml`).
+
 ## Run it locally
 
 The page loads `lesson.json` with `fetch`, and browsers block that for files opened straight from disk. Double-clicking `index.html` will show a "The lesson didn't load" message. Start a small local server instead:
