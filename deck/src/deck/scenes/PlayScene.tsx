@@ -16,7 +16,7 @@ export function PlayScene({ beat }: { beat: Beat }) {
         <p className="mt-8 text-body font-extrabold text-blue-text">{lessonUrl.replace("https://", "")}</p>
       </Show>
       <Show when={shown} delay={0.25} className="absolute flex items-end gap-4" style={{ left: grid.left, top: 560 }}>
-        <img src={assetPath("/characters/pawnzy-celebrate.svg")} alt="" width={320} height={320} />
+        <img src={assetPath("/characters/pawnzy-celebrate.svg")} alt="" width={320} height={320} className="translate-y-[26px]" />
         <img src={assetPath("/characters/duo.png")} alt="" width={260} height={260} />
       </Show>
       <Show

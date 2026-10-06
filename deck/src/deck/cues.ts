@@ -3,6 +3,7 @@ import type { Beat } from "./script";
 type Cue = { speaker: string; line: string };
 
 export const cues: Record<Beat, Cue> = {
+  skitStage: { speaker: "Everyone", line: "Skit plays. Advance when it ends." },
   skitText: { speaker: "Speaker A", line: "The text in our skit wasn’t made up." },
   fbiWarning: {
     speaker: "Speaker A",

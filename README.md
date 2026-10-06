@@ -10,6 +10,7 @@ Live: https://appiest.github.io/duolingo-if/
 
 The two-minute deck that follows the skit lives in `deck/` and is published at https://appiest.github.io/duolingo-if/present/.
 
+- **Skit backdrop:** the first slide is a "Real or Scam?" title card with Pawnzy and Duo. Leave it up during the skit, then advance.
 - **Present:** open the link, press F for fullscreen, and use the arrow keys, Space or a click to advance. Each slide moves through its beats, and the URL remembers where you are.
 - **Rehearse:** press N to show or hide the rehearsal strip. It shows the speaker's line and "Slide x, beat y" in the corners, and your browser remembers the choice. It never prints.
 - **Facts:** https://appiest.github.io/duolingo-if/present/facts/ lists every number on the slides, what it counts, the source's exact words with a link, and likely audience questions with answers.

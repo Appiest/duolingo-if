@@ -6,6 +6,7 @@ export type Question = { question: string; answer: string; sources: SourceKey[] 
 export type SlideFacts = { title: string; figures: Figure[]; questions: Question[] };
 
 export const facts: Record<SlideId, SlideFacts> = {
+  skit: { title: "Skit backdrop", figures: [], questions: [] },
   real: {
     title: "The text from our skit is real",
     figures: [

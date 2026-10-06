@@ -1,4 +1,5 @@
 export const slides = [
+  { id: "skit", beats: ["skitStage"] },
   { id: "real", beats: ["skitText", "fbiWarning"] },
   { id: "scale", beats: ["topContact", "weekly", "losses"] },
   { id: "kids", beats: ["phones", "youngLosses"] },
