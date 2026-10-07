@@ -33,7 +33,7 @@ jobs:
       - name: Put the lesson and the deck together
         run: |
           mkdir _site
-          rsync -a --exclude deck --exclude tools --exclude assets/source --exclude .github --exclude .git --exclude README.md --exclude _site ./ _site/
+          rsync -a --exclude deck --exclude tools --exclude assets/source --exclude assets/characters/large --exclude .github --exclude .git --exclude README.md --exclude _site ./ _site/
           cp -R deck/out _site/present
       - uses: actions/upload-pages-artifact@v3
         with:

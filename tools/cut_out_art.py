@@ -1,16 +1,26 @@
 #!/usr/bin/env python3
-"""Cut Pawnzy's art out of the team's exported JPEGs.
+"""Cut Pawnzy's art out of the team's exported JPEGs, upscaled 4x.
 
-Run from the project folder:  python3 tools/cut_out_art.py
+Run from the project folder:
+    python3 tools/cut_out_art.py --upscaler /path/to/realesrgan-ncnn-vulkan
 
-The originals live untouched in assets/source/pawnzy/. Each full-body pose was
-exported twice, on white and on black, so its transparency is recovered
-exactly by comparing the two copies. Heads and props only exist on white, so
-their background is removed by flooding in from the edges, which keeps white
-details inside the shape (eyes, belly) intact. Results are written to
-assets/characters/ as transparent PNGs.
+The originals live untouched in assets/source/pawnzy/. Each piece is cropped,
+upscaled 4x with Real-ESRGAN's realesr-animevideov3 model (the most faithful
+to flat cartoon art), then cut out:
+
+- Full-body poses were exported on white and on black, so transparency is
+  recovered exactly by comparing the two upscaled copies.
+- Heads and props only exist on white, so their background is removed by
+  flooding in from the edges, which keeps white details inside intact.
+
+Writes transparent PNGs to assets/characters/ at web size (1024px) and to
+assets/characters/large/ at full size. tools/make_expressions.py then draws the
+extra faces from these.
 """
 
+import argparse
+import subprocess
+import tempfile
 from pathlib import Path
 
 import numpy as np
@@ -20,15 +30,18 @@ from scipy import ndimage
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "assets" / "source" / "pawnzy"
 OUT = ROOT / "assets" / "characters"
+LARGE = OUT / "large"
+MODEL = "realesr-animevideov3"
+SCALE = 4
+CROP_MARGIN = 16
 PADDING = 0.06
+WEB_SIZE = 768
 
-# Full-body poses, exported on white and on black.
 PAIRS = {
     "pawnzy-standing": ("Untitled28_20261007001113.jpeg", "Untitled28_20261007001113.PNG.jpg"),
     "pawnzy-tiptoe": ("Untitled28_20261007001120.jpeg", "Untitled28_20261007001120.PNG.jpg"),
 }
 
-# Single layers exported on white.
 LAYERS = {
     "pawnzy-head-front": "Untitled28_20261007001105.jpeg",
     "pawnzy-head-side": "Untitled28_20261007001049.jpeg",
@@ -39,21 +52,45 @@ LAYERS = {
 
 
 def load(name):
-    return np.asarray(Image.open(SOURCE / name).convert("RGB")).astype(np.float32)
+    return np.asarray(Image.open(SOURCE / name).convert("RGB"))
+
+
+def subject_box(on_white):
+    """Bounding box of the drawing, ignoring single stray pixels."""
+    ink = on_white.astype(int).min(axis=2) < 225
+    labels, count = ndimage.label(ink)
+    sizes = ndimage.sum(ink, labels, range(1, count + 1))
+    keep = np.isin(labels, [index + 1 for index, size in enumerate(sizes) if size >= sizes.max() * 0.01])
+    rows, columns = np.nonzero(keep)
+    height, width = ink.shape
+    return (
+        max(columns.min() - CROP_MARGIN, 0),
+        max(rows.min() - CROP_MARGIN, 0),
+        min(columns.max() + CROP_MARGIN, width),
+        min(rows.max() + CROP_MARGIN, height),
+    )
+
+
+def upscale(upscaler, pixels, box):
+    with tempfile.TemporaryDirectory() as scratch:
+        source, target = Path(scratch) / "in.png", Path(scratch) / "out.png"
+        Image.fromarray(pixels).crop(box).save(source)
+        subprocess.run(
+            [str(upscaler), "-i", str(source), "-o", str(target), "-n", MODEL, "-s", str(SCALE)],
+            check=True, capture_output=True, cwd=Path(upscaler).parent,
+        )
+        return np.asarray(Image.open(target).convert("RGB")).astype(np.float32)
 
 
 def alpha_from_pair(on_white, on_black):
-    """Exact alpha from the same art composited over white and over black."""
-    alpha = 1 - (on_white - on_black).mean(axis=2) / 255
-    alpha = np.clip(alpha, 0, 1)
-    alpha[alpha < 0.04] = 0
-    alpha[alpha > 0.96] = 1
+    alpha = np.clip(1 - (on_white - on_black).mean(axis=2) / 255, 0, 1)
+    alpha[alpha < 0.05] = 0
+    alpha[alpha > 0.95] = 1
     color = np.where(alpha[..., None] > 0, on_black / np.maximum(alpha[..., None], 1e-3), 0)
     return np.clip(color, 0, 255), alpha
 
 
 def alpha_from_white(on_white):
-    """Background is whatever near-white region touches the image edge."""
     image = Image.fromarray(on_white.astype(np.uint8))
     marked = image.copy()
     height, width = on_white.shape[:2]
@@ -61,25 +98,23 @@ def alpha_from_white(on_white):
         ImageDraw.floodfill(marked, corner, (255, 0, 255), thresh=40)
     background = np.all(np.asarray(marked) == (255, 0, 255), axis=2)
     alpha = (~background).astype(np.float32)
-    # Soften the edge one pixel, using how far each edge pixel is from white.
-    edge = ndimage.binary_dilation(alpha > 0) & ~ndimage.binary_erosion(alpha > 0)
+    edge = ndimage.binary_dilation(alpha > 0, iterations=2) & ~ndimage.binary_erosion(alpha > 0, iterations=2)
     lightness = on_white.mean(axis=2)
-    alpha[edge] = np.clip((255 - lightness[edge]) / 120, 0, 1)
+    alpha[edge] = np.clip((250 - lightness[edge]) / 110, 0, 1)
     return on_white, alpha
 
 
 def keep_main_shapes(alpha):
-    """Drop stray specks: keep shapes at least 1% the size of the largest."""
     solid = alpha > 0.5
     labels, count = ndimage.label(solid)
     if count == 0:
         return alpha
     sizes = ndimage.sum(solid, labels, range(1, count + 1))
     keep = np.isin(labels, [index + 1 for index, size in enumerate(sizes) if size >= sizes.max() * 0.01])
-    return alpha * ndimage.binary_dilation(keep, iterations=2)
+    return alpha * ndimage.binary_dilation(keep, iterations=4)
 
 
-def save_square(color, alpha, name):
+def square(color, alpha):
     alpha = keep_main_shapes(alpha)
     rows, columns = np.nonzero(alpha > 0.02)
     top, bottom, left, right = rows.min(), rows.max() + 1, columns.min(), columns.max() + 1
@@ -88,16 +123,34 @@ def save_square(color, alpha, name):
     side = int(max(subject.size) * (1 + 2 * PADDING))
     canvas = Image.new("RGBA", (side, side), (0, 0, 0, 0))
     canvas.paste(subject, ((side - subject.width) // 2, (side - subject.height) // 2))
-    canvas.save(OUT / f"{name}.png", optimize=True)
-    print(f"{name}.png  {side}x{side}")
+    return canvas
+
+
+def save(image, name):
+    image.save(LARGE / f"{name}.png", optimize=True)
+    save_web(image, OUT / f"{name}.png")
+    print(f"{name}.png  {image.width}px full")
+
+
+def save_web(image, path):
+    """Smaller copy for the lesson and deck: 768px with a 256-color palette,
+    which flat cartoon art keeps without visible change."""
+    web = image.resize((WEB_SIZE, WEB_SIZE), Image.LANCZOS) if image.width > WEB_SIZE else image
+    web.quantize(256, method=Image.Quantize.FASTOCTREE).save(path, optimize=True)
 
 
 def main():
-    OUT.mkdir(parents=True, exist_ok=True)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--upscaler", required=True, help="Path to the realesrgan-ncnn-vulkan binary")
+    upscaler = Path(parser.parse_args().upscaler).resolve()
+    LARGE.mkdir(parents=True, exist_ok=True)
     for name, (white, black) in PAIRS.items():
-        save_square(*alpha_from_pair(load(white), load(black)), name)
+        on_white, on_black = load(white), load(black)
+        box = subject_box(on_white)
+        save(square(*alpha_from_pair(upscale(upscaler, on_white, box), upscale(upscaler, on_black, box))), name)
     for name, white in LAYERS.items():
-        save_square(*alpha_from_white(load(white)), name)
+        on_white = load(white)
+        save(square(*alpha_from_white(upscale(upscaler, on_white, subject_box(on_white)))), name)
 
 
 if __name__ == "__main__":

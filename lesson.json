@@ -9,16 +9,16 @@
       "poses": {
         "idle": "assets/characters/pawnzy-standing.png",
         "happy": "assets/characters/pawnzy-standing.png",
-        "sad": "assets/characters/pawnzy-tiptoe.png",
-        "shocked": "assets/characters/pawnzy-tiptoe.png",
-        "celebrate": "assets/characters/pawnzy-standing.png"
+        "sad": "assets/characters/pawnzy-standing-sad.png",
+        "shocked": "assets/characters/pawnzy-standing-shocked.png",
+        "celebrate": "assets/characters/pawnzy-standing-celebrate.png"
       },
       "portraits": {
         "idle": "assets/characters/pawnzy-head-front.png",
         "happy": "assets/characters/pawnzy-head-front.png",
-        "sad": "assets/characters/pawnzy-head-side.png",
-        "shocked": "assets/characters/pawnzy-head-side.png",
-        "celebrate": "assets/characters/pawnzy-head-front.png"
+        "sad": "assets/characters/pawnzy-head-front-sad.png",
+        "shocked": "assets/characters/pawnzy-head-front-shocked.png",
+        "celebrate": "assets/characters/pawnzy-head-front-celebrate.png"
       }
     },
     "intro": {

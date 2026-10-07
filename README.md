@@ -268,24 +268,34 @@ The `combo` sound plays at each number in `ui.comboMilestones`.
 
 ## Pawnzy's art
 
-The team's original exports live untouched in `assets/source/pawnzy/`. `tools/cut_out_art.py` cuts them out into transparent PNGs in `assets/characters/`:
+The team's original exports live untouched in `assets/source/pawnzy/`. Two scripts turn them into the art the lesson and the deck use:
 
-| File | What it is | Where it shows |
+1. `tools/cut_out_art.py` upscales each piece 4× with Real-ESRGAN's `realesr-animevideov3` model, which keeps flat cartoon art faithful, then cuts it out as a transparent PNG.
+2. `tools/make_expressions.py` draws Pawnzy's other faces (sad, shocked, celebrate) onto the team's happy face. It finds the eyes and mouth, paints over them with colors sampled from the art, and draws new features in the same flat style.
+
+| Mood | Full body (big screens) | Head (beside questions and over the feedback bar) |
 | --- | --- | --- |
-| `pawnzy-standing.png` | Full body, arms up | Start and complete screens, intro chat, deck |
-| `pawnzy-tiptoe.png` | Full body, tip-toeing and glancing sideways | Start screen (shocked) and chat when he's worried |
-| `pawnzy-head-front.png` | Front-facing head | Beside each question and peeking over the feedback bar |
-| `pawnzy-head-side.png` | Side-glancing head | Same spots, after a wrong answer |
-| `apple.png`, `book.png`, `phone.png` | Props | The deck's skit backdrop (apple and book) |
+| idle, happy | `pawnzy-standing.png` | `pawnzy-head-front.png` |
+| sad | `pawnzy-standing-sad.png` | `pawnzy-head-front-sad.png` |
+| shocked | `pawnzy-standing-shocked.png` | `pawnzy-head-front-shocked.png` |
+| celebrate | `pawnzy-standing-celebrate.png` | `pawnzy-head-front-celebrate.png` |
 
-`lesson.character.poses` picks the full-body art for each mood, and `lesson.character.portraits` picks the head for small spots. Right now `happy` and `celebrate` reuse the standing pose, and `sad` and `shocked` reuse the tip-toe pose. To give each mood its own art, export it, add it to `cut_out_art.py`, and point the matching entries in `lesson.json` at it.
+The tip-toe pose (`pawnzy-tiptoe.png`), the side-glancing head (`pawnzy-head-side.png`) and the props (`apple.png`, `book.png`, `phone.png`) are there too. The deck's skit backdrop uses the book and apple. `lesson.character.poses` and `lesson.character.portraits` in `lesson.json` pick the art for each mood.
+
+The web versions in `assets/characters/` are up to 1024px. Full-size versions, up to 1900px, are in `assets/characters/large/` for print or other uses.
 
 To update the art:
 
-1. Put new exports in `assets/source/pawnzy/`. For a full-body pose, export it twice from the same canvas, once on white and once on black. The script compares the two copies to get exact transparent edges.
-2. Add or change the file names at the top of `tools/cut_out_art.py`, and run `python3 tools/cut_out_art.py`.
+1. Put new exports in `assets/source/pawnzy/`. For a full-body pose, export it twice from the same canvas, once on white and once on black, so the script can recover exact transparent edges.
+2. Download the macOS build of [Real-ESRGAN ncnn](https://github.com/xinntao/Real-ESRGAN/releases/tag/v0.2.5.0) (`realesrgan-ncnn-vulkan-20220424-macos.zip`) and unzip it anywhere.
+3. Update the file names at the top of `tools/cut_out_art.py` if they changed, then run:
 
-Export at a higher resolution if you can. In the current files Pawnzy is about 375 pixels tall, which is sharp in the lesson but slightly soft at the deck's largest sizes.
+```sh
+python3 tools/cut_out_art.py --upscaler /path/to/realesrgan-ncnn-vulkan
+python3 tools/make_expressions.py
+```
+
+The scripts need `numpy`, `scipy` and `Pillow`.
 
 ## Controls
 
