@@ -21,7 +21,7 @@ export function LessonScene({ beat }: { beat: Beat }) {
     <>
       <Headline when={beat === "pawnzyLesson"}>Pawnzy’s lesson</Headline>
       <Show when={beat === "pawnzyLesson"} delay={0.1} className="absolute" style={{ left: grid.left, top: 360 }}>
-        <img src={assetPath("/characters/pawnzy-happy.svg")} alt="" width={460} height={460} />
+        <img src={assetPath("/characters/pawnzy-standing.png")} alt="" width={480} height={480} />
       </Show>
 
       <Headline when={fourPs}>The FTC’s 4 red flags</Headline>

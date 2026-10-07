@@ -266,24 +266,26 @@ The recorder ties each take to its speaker and exact wording. After a rename, re
 
 The `combo` sound plays at each number in `ui.comboMilestones`.
 
-## Swap Pawnzy's art
+## Pawnzy's art
 
-The code never draws Pawnzy itself. Every image comes from the paths in `lesson.character.poses`:
+The team's original exports live untouched in `assets/source/pawnzy/`. `tools/cut_out_art.py` cuts them out into transparent PNGs in `assets/characters/`:
 
-```
-assets/characters/pawnzy-idle.svg
-assets/characters/pawnzy-happy.svg
-assets/characters/pawnzy-sad.svg
-assets/characters/pawnzy-shocked.svg
-assets/characters/pawnzy-celebrate.svg
-```
+| File | What it is | Where it shows |
+| --- | --- | --- |
+| `pawnzy-standing.png` | Full body, arms up | Start and complete screens, intro chat, deck |
+| `pawnzy-tiptoe.png` | Full body, tip-toeing and glancing sideways | Start screen (shocked) and chat when he's worried |
+| `pawnzy-head-front.png` | Front-facing head | Beside each question and peeking over the feedback bar |
+| `pawnzy-head-side.png` | Side-glancing head | Same spots, after a wrong answer |
+| `apple.png`, `book.png`, `phone.png` | Props | The deck's skit backdrop (apple and book) |
 
-You can swap the art in either of two ways:
+`lesson.character.poses` picks the full-body art for each mood, and `lesson.character.portraits` picks the head for small spots. Right now `happy` and `celebrate` reuse the standing pose, and `sad` and `shocked` reuse the tip-toe pose. To give each mood its own art, export it, add it to `cut_out_art.py`, and point the matching entries in `lesson.json` at it.
 
-- Replace those five files with your own art and keep the same names.
-- Put your files anywhere in the folder, such as `assets/characters/pawnzy-happy.png`, and update the matching paths in `lesson.json`.
+To update the art:
 
-The current poses are placeholders drawn by `tools/make_placeholder_art.py`. Use square images with transparent backgrounds. The lesson shows them at about 110px and the intro and complete screens show them at 180px, so export at 400px or larger for sharp phone screens. Keep paths relative, with no leading `/`, because the site is served from the `/duolingo-if/` subfolder.
+1. Put new exports in `assets/source/pawnzy/`. For a full-body pose, export it twice from the same canvas, once on white and once on black. The script compares the two copies to get exact transparent edges.
+2. Add or change the file names at the top of `tools/cut_out_art.py`, and run `python3 tools/cut_out_art.py`.
+
+Export at a higher resolution if you can. In the current files Pawnzy is about 375 pixels tall, which is sharp in the lesson but slightly soft at the deck's largest sizes.
 
 ## Controls
 

@@ -74,8 +74,17 @@ function voiceFor(text) {
 }
 
 function poseSource(pose) {
-  const { poses } = lesson.lesson.character;
-  return poses[pose] ?? poses.idle;
+  return artFor(pose, "pose");
+}
+
+function portraitSource(pose) {
+  return artFor(pose, "portrait");
+}
+
+function artFor(pose, kind) {
+  const { poses, portraits = poses } = lesson.lesson.character;
+  const art = kind === "portrait" ? portraits : poses;
+  return art[pose] ?? art.idle;
 }
 
 function uiText() {
@@ -107,8 +116,8 @@ function totalSteps() {
   return lesson.questions.length + 1;
 }
 
-function characterImage(pose, className) {
-  const image = el("img", { class: `biscuit ${className}`, width: "200", height: "200", decoding: "async" });
+function characterImage(pose, className, kind = "pose") {
+  const image = el("img", { class: `biscuit ${className}`, width: "200", height: "200", decoding: "async", dataset: { art: kind } });
   setPose(image, pose);
   return image;
 }
@@ -116,13 +125,13 @@ function characterImage(pose, className) {
 function setPose(image, pose) {
   const { name, poses } = lesson.lesson.character;
   const resolvedPose = poses[pose] ? pose : "idle";
-  image.src = poses[resolvedPose];
+  image.src = artFor(resolvedPose, image.dataset.art);
   image.alt = `${name}, ${resolvedPose}`;
   if (HOP_POSES.has(resolvedPose) && image.isConnected) restartAnimation(image, "is-hopping");
 }
 
 function speechBubble(text, variant) {
-  return el("div", { class: `bubble ${variant}` }, el("p", {}, text), listenButton(text, "Hear Biscuit say this"));
+  return el("div", { class: `bubble ${variant}` }, el("p", {}, text), listenButton(text, `Hear ${lesson.lesson.character.name} say this`));
 }
 
 function disclaimer() {
@@ -231,7 +240,7 @@ function soundToggle() {
 function buildQuitDialog() {
   const dialog = el("dialog", { class: "quit-sheet", "aria-labelledby": "quit-title" });
   dialog.append(el("div", { class: "quit-content" },
-    characterImage("sad", "biscuit-quit"),
+    characterImage("sad", "biscuit-quit", "portrait"),
     el("h2", { id: "quit-title" }, "Wait, don't go!"),
     el("p", {}, "You'll lose your progress if you end the session now."),
     el("button", { type: "button", class: "btn btn-blue btn-wide", onClick: () => dialog.close() }, "Keep learning"),
@@ -262,7 +271,7 @@ function showQuestion() {
   const shell = session.shell;
   session.question = question;
   session.phase = "answering";
-  session.image = characterImage("idle", "biscuit-prompt");
+  session.image = characterImage("idle", "biscuit-prompt", "portrait");
   session.exercise = renderExercise(question, { lesson, onChange: updateCheckButton, onComplete: finishQuestion, playSound });
 
   const badgeNode = questionBadge(badge);
@@ -366,7 +375,7 @@ function nextPraise() {
 
 function showSheet({ correct, almost, correctAnswer, text, heading, pose }) {
   const { sheet, sheetContent, bottomBar, main, peekImage } = session.shell;
-  peekImage.src = poseSource(pose);
+  peekImage.src = portraitSource(pose);
   const continueButton = el("button", { type: "button", class: `btn ${correct ? "btn-primary" : "btn-danger"} sheet-button`, onClick: advance },
     correct ? "Continue" : "Got it");
 

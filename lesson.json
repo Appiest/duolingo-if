@@ -7,11 +7,18 @@
       "name": "Pawnzy",
       "description": "A raccoon who trusts everyone. Once almost paid a fake toll. Has never been in a car.",
       "poses": {
-        "idle": "assets/characters/pawnzy-idle.svg",
-        "happy": "assets/characters/pawnzy-happy.svg",
-        "sad": "assets/characters/pawnzy-sad.svg",
-        "shocked": "assets/characters/pawnzy-shocked.svg",
-        "celebrate": "assets/characters/pawnzy-celebrate.svg"
+        "idle": "assets/characters/pawnzy-standing.png",
+        "happy": "assets/characters/pawnzy-standing.png",
+        "sad": "assets/characters/pawnzy-tiptoe.png",
+        "shocked": "assets/characters/pawnzy-tiptoe.png",
+        "celebrate": "assets/characters/pawnzy-standing.png"
+      },
+      "portraits": {
+        "idle": "assets/characters/pawnzy-head-front.png",
+        "happy": "assets/characters/pawnzy-head-front.png",
+        "sad": "assets/characters/pawnzy-head-side.png",
+        "shocked": "assets/characters/pawnzy-head-side.png",
+        "celebrate": "assets/characters/pawnzy-head-front.png"
       }
     },
     "intro": {
