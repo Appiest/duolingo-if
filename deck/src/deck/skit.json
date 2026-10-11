@@ -37,7 +37,17 @@
   {
     "id": "skit-08",
     "speaker": "Brendan (Pawnzy)",
-    "line": "I’m Pawnzy! I almost fell for a fake toll text once, and I’m a raccoon. I’ve never even been in a car!"
+    "line": "I’m Pawnzy. I used to be a scammer. I sent texts exactly like that one."
+  },
+  {
+    "id": "skit-08b",
+    "speaker": "Alexis (Kid)",
+    "line": "Wait, you’re a scammer?! Is that why you wear a mask?"
+  },
+  {
+    "id": "skit-08c",
+    "speaker": "Brendan (Pawnzy)",
+    "line": "That’s just my face. I’m a raccoon. But when my niece got scammed, I saw how much it hurt, and I quit. Now I teach kids how to spot scams and stay safe from them."
   },
   {
     "id": "skit-09",
@@ -47,7 +57,7 @@
   {
     "id": "skit-10",
     "speaker": "Brendan (Pawnzy)",
-    "line": "Roblox is real, but that text isn’t from them. Roblox says there’s no such thing as free Robux."
+    "line": "Roblox is real, but that text isn’t from them. Trust me, I used to write those. Roblox says there’s no such thing as free Robux."
   },
   {
     "id": "skit-11",
@@ -57,7 +67,7 @@
   {
     "id": "skit-12",
     "speaker": "Brendan (Pawnzy)",
-    "line": "That’s the trick. Scammers rush you so you don’t stop and think."
+    "line": "That’s the oldest trick in my old book. Rush people so they don’t stop and think."
   },
   {
     "id": "skit-13",
