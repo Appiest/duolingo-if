@@ -1,28 +1,4 @@
 {
-  "I owe $4.15 in tolls?? I've never even been in a car! Should I just pay it?": {
-    "file": "assets/voice/4a68f4c033-1c00aae2.m4a",
-    "seconds": 6.2
-  },
-  "Help!! I got this text. Do I have to pay it?": {
-    "file": "assets/voice/2682471448-fb2b3881.m4a",
-    "seconds": 3.6
-  },
-  "Stop! Don't tap that link. That's a scam text.": {
-    "file": "assets/voice/a687d10397-25d765a5.m4a",
-    "seconds": 2.95
-  },
-  "A scam text? What's that?": {
-    "file": "assets/voice/b0f88c0c76-5f302564.m4a",
-    "seconds": 2.39
-  },
-  "It's a text from someone pretending to be a company you trust. They want your money or your secret codes.": {
-    "file": "assets/voice/5bf60e1d94-9aa27535.m4a",
-    "seconds": 4.7
-  },
-  "In 2024, people told the government they lost $470 million to scam texts!": {
-    "file": "assets/voice/1d8e122f88-6f4bf256.m4a",
-    "seconds": 5.0
-  },
   "$470 million?! That's a LOT of trash-can snacks.": {
     "file": "assets/voice/2218003739-0c67ec0a.m4a",
     "seconds": 4.8
@@ -31,57 +7,9 @@
     "file": "assets/voice/4016c876ff-27231b8d.m4a",
     "seconds": 4.1
   },
-  "Teach me!": {
-    "file": "assets/voice/79b3e2b8a2-7ee5b867.m4a",
-    "seconds": 1.46
-  },
-  "Scam texts use the same 4 tricks over and over. I call them the 4 P's.": {
-    "file": "assets/voice/e7b9400768-5b8ec6da.m4a",
-    "seconds": 4.0
-  },
-  "Ooh, like a secret code?": {
-    "file": "assets/voice/e90edb2844-ab18d301.m4a",
-    "seconds": 2.29
-  },
-  "Kind of! Look at this one.": {
-    "file": "assets/voice/0830efe5bc-eeca37f6.m4a",
-    "seconds": 1.91
-  },
-  "P number 1 is Pretend. It says it's USPS, but anyone can type that name.": {
-    "file": "assets/voice/4a134cc0f6-28cc3428.m4a",
-    "seconds": 4.2
-  },
-  "P number 2 is Problem. It says something is wrong, like a stuck package.": {
-    "file": "assets/voice/b0cf3a973e-41d961bc.m4a",
-    "seconds": 3.6
-  },
-  "P number 3 is Pressure. \"In the next hour\" tries to rush you.": {
-    "file": "assets/voice/959b29120d-016014e3.m4a",
-    "seconds": 2.99
-  },
-  "P number 4 is Pay. Real companies never ask for gift cards!": {
-    "file": "assets/voice/cb55bb9b7e-ce76d51e.m4a",
-    "seconds": 3.8
-  },
-  "Pretend, Problem, Pressure, Pay. Wait, that text has ALL of them!": {
-    "file": "assets/voice/4dd0325d34-1d9147e2.m4a",
-    "seconds": 6.1
-  },
-  "Yep! Spot even one P, and stop and ask a grown-up.": {
-    "file": "assets/voice/f07f3c5ae6-ab17d10f.m4a",
-    "seconds": 3.3
-  },
-  "Let me try!": {
-    "file": "assets/voice/fecc96b1a7-8d73d449.m4a",
-    "seconds": 1.13
-  },
   "Real or scam?": {
     "file": "assets/voice/5b6b22fb69-bfbf355b.m4a",
     "seconds": 1.13
-  },
-  "You got it! I almost tapped that link.": {
-    "file": "assets/voice/8788b49bcb-d231d25f.m4a",
-    "seconds": 2.835
   },
   "It's a scam! Real toll companies don't text you a link and tell you to pay today.": {
     "file": "assets/voice/88a4fb74a1-e1913384.m4a",
@@ -103,33 +31,13 @@
     "file": "assets/voice/0e1f32b472-41c61010.m4a",
     "seconds": 1.19
   },
-  "Pretend, Problem, Pressure, Pay. The 4 P's! I'm writing them on my paw.": {
-    "file": "assets/voice/76e2696096-b05eae9a.m4a",
-    "seconds": 5.9
-  },
   "Those are the 4 P's: Pretend, Problem, Pressure, and Pay.": {
     "file": "assets/voice/726487e3c2-89be7ddd.m4a",
     "seconds": 4.8
   },
-  "Pawnzy ordered a toy yesterday. Now he gets this text. Real or scam?": {
-    "file": "assets/voice/66620f4825-dd6b8173.m4a",
-    "seconds": 1.94
-  },
-  "Real! It doesn't ask me to do anything. No link, no money, no rush.": {
-    "file": "assets/voice/888c5b5bd4-5f566ddb.m4a",
-    "seconds": 5.5
-  },
   "This one's real. It doesn't ask for anything. Not sure? Ask a grown-up to check the real USPS app.": {
     "file": "assets/voice/79a621fb58-6549cb40.m4a",
     "seconds": 6.7
-  },
-  "What should Pawnzy do?": {
-    "file": "assets/voice/2d898d2354-427dc40e.m4a",
-    "seconds": 1.05
-  },
-  "Yes! Don't text back. Call the number on your card instead.": {
-    "file": "assets/voice/7b618f56a7-19a44a80.m4a",
-    "seconds": 4.6
   },
   "Never send a code! A real bank won't ask for it in a text.": {
     "file": "assets/voice/aba7c589ae-c4ea12e0.m4a",
@@ -142,14 +50,6 @@
   "Asking again still plays along. A real bank never needs that code.": {
     "file": "assets/voice/e3a13cde00-775f5db4.m4a",
     "seconds": 4.2
-  },
-  "Build Pawnzy's new rule.": {
-    "file": "assets/voice/03782c017a-de590c68.m4a",
-    "seconds": 1.29
-  },
-  "Never share a code with anyone who texts you. I'm writing it on my trash can lid.": {
-    "file": "assets/voice/ad23ba9d69-01bc32b6.m4a",
-    "seconds": 4.6
   },
   "The rule is \"Never share a code with anyone who texts you.\"": {
     "file": "assets/voice/e32974e0ab-641d0c30.m4a",
@@ -170,10 +70,6 @@
   "Texting back tells scammers your number is real. Don't reply at all.": {
     "file": "assets/voice/43143c0fc1-96f59b10.m4a",
     "seconds": 5.3
-  },
-  "Pawnzy found a scam text. What should he do next?": {
-    "file": "assets/voice/50b7d5f358-e531b2b4.m4a",
-    "seconds": 2.15
   },
   "7726 spells SPAM on a phone keypad! Phone companies use it to block scammers.": {
     "file": "assets/voice/62431d7cd8-a50309cd.m4a",
@@ -218,18 +114,6 @@
   "Pretend, Problem, Pressure, Pay. You'll spot them everywhere now.": {
     "file": "assets/voice/6e0fdc5fc4-24383577.m4a",
     "seconds": 4.1
-  },
-  "Pawnzy just booked a vet checkup. Real or scam?": {
-    "file": "assets/voice/7c3e39c7b9-b7d910c5.m4a",
-    "seconds": 2.59
-  },
-  "Real! It matches what Pawnzy did, and it asks for nothing.": {
-    "file": "assets/voice/b8786e09dd-49af9b1d.m4a",
-    "seconds": 4.2
-  },
-  "This one's real. It matches his calendar and doesn't ask for anything. Not every text is a scam!": {
-    "file": "assets/voice/1d0d5acbc3-e9fce104.m4a",
-    "seconds": 5.6
   },
   "Never share a code, even with someone who sounds nice.": {
     "file": "assets/voice/a8d0ac33e1-e76533d1.m4a",
@@ -287,10 +171,6 @@
     "file": "assets/voice/00ad64f2be-2bf3aa79.m4a",
     "seconds": 4.9
   },
-  "Scam! Scammers can use AI to write perfect texts. It's still a surprise problem with a link.": {
-    "file": "assets/voice/41fdf7f4e3-b27c9365.m4a",
-    "seconds": 6.7
-  },
   "It's a scam. Perfect spelling doesn't mean it's safe. It's still a surprise problem with a link. Check the real app instead.": {
     "file": "assets/voice/ca392af870-6cc5e621.m4a",
     "seconds": 7.4
@@ -326,9 +206,5 @@
   "10 in a row!": {
     "file": "assets/voice/2801a8b9e3-dbe04003.m4a",
     "seconds": 1.35
-  },
-  "You saved my $4.15! I'm spending it on snacks. Same time tomorrow?": {
-    "file": "assets/voice/cfb190435b-e11471b9.m4a",
-    "seconds": 6.5
   }
 }

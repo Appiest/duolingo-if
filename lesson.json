@@ -5,7 +5,7 @@
     "unit": "Scam Smarts, Unit 1",
     "character": {
       "name": "Pawnzy",
-      "description": "A raccoon who trusts everyone. Once almost paid a fake toll. Has never been in a car.",
+      "description": "A raccoon who used to send scam texts. Quit when one tricked his niece. Now teaches kids every trick he used, so they can spot them.",
       "poses": {
         "idle": "assets/characters/pawnzy-standing.png",
         "happy": "assets/characters/pawnzy-standing.png",
@@ -24,9 +24,9 @@
       }
     },
     "intro": {
-      "pose": "shocked",
-      "speech": "I owe $4.15 in tolls?? I've never even been in a car! Should I just pay it?",
-      "button": "Let's find out"
+      "pose": "happy",
+      "speech": "I used to send scam texts. Then one tricked my niece, and I quit. Now I'm on your side!",
+      "button": "Hear my story"
     },
     "introChat": {
       "friend": {
@@ -37,8 +37,8 @@
       "messages": [
         {
           "from": "biscuit",
-          "pose": "shocked",
-          "text": "Help!! I got this text. Do I have to pay it?",
+          "pose": "sad",
+          "text": "Duo, I need to tell you something. I used to send texts like this one.",
           "forwarded": {
             "sender": "FasTrak",
             "text": "You have an unpaid toll balance of $4.15. Pay by today to avoid a $50 late fee: fastrak-tollpay.com"
@@ -46,20 +46,25 @@
         },
         {
           "from": "friend",
-          "text": "Stop! Don't tap that link. That's a scam text."
+          "text": "Wait. YOU sent that?! That's a scam text!"
+        },
+        {
+          "from": "biscuit",
+          "pose": "sad",
+          "text": "I know. Then one of my texts tricked my niece, and she lost her birthday money."
+        },
+        {
+          "from": "friend",
+          "text": "Oh no! Is she okay?"
         },
         {
           "from": "biscuit",
           "pose": "thinking",
-          "text": "A scam text? What's that?"
+          "text": "She's okay. But I quit that day. Now I teach kids every trick I used, so they can spot them."
         },
         {
           "from": "friend",
-          "text": "It's a text from someone pretending to be a company you trust. They want your money or your secret codes."
-        },
-        {
-          "from": "friend",
-          "text": "In 2024, people told the government they lost $470 million to scam texts!",
+          "text": "Good. In 2024, people told the government they lost $470 million to scam texts!",
           "source": "FTC Data Spotlight, April 2025: \"In 2024, people reported $470 million in losses to these scams.\" https://www.ftc.gov/news-events/data-visualizations/data-spotlight/2025/04/top-text-scams-2024"
         },
         {
@@ -74,7 +79,7 @@
         {
           "from": "biscuit",
           "pose": "happy",
-          "text": "Teach me!"
+          "text": "And I know every clue. Let's start!"
         }
       ]
     },
@@ -111,53 +116,58 @@
         },
         "messages": [
           {
+            "from": "biscuit",
+            "pose": "happy",
+            "text": "Want to know a secret? Every scam text I sent used the same 4 tricks. I call them the 4 P's."
+          },
+          {
             "from": "friend",
-            "text": "Scam texts use the same 4 tricks over and over. I call them the 4 P's."
+            "text": "Ooh, like a secret code?"
           },
           {
             "from": "biscuit",
-            "text": "Ooh, like a secret code?",
-            "pose": "happy"
-          },
-          {
-            "from": "friend",
+            "pose": "happy",
             "text": "Kind of! Look at this one.",
             "showExample": true
           },
           {
-            "from": "friend",
+            "from": "biscuit",
+            "pose": "happy",
             "text": "P number 1 is Pretend. It says it's USPS, but anyone can type that name.",
             "highlight": "pretend"
           },
           {
-            "from": "friend",
+            "from": "biscuit",
+            "pose": "happy",
             "text": "P number 2 is Problem. It says something is wrong, like a stuck package.",
             "highlight": "problem"
           },
           {
-            "from": "friend",
+            "from": "biscuit",
+            "pose": "happy",
             "text": "P number 3 is Pressure. \"In the next hour\" tries to rush you.",
             "highlight": "pressure"
           },
           {
-            "from": "friend",
+            "from": "biscuit",
+            "pose": "happy",
             "text": "P number 4 is Pay. Real companies never ask for gift cards!",
             "highlight": "pay"
           },
           {
-            "from": "biscuit",
+            "from": "friend",
             "text": "Pretend, Problem, Pressure, Pay. Wait, that text has ALL of them!",
-            "pose": "shocked",
             "highlight": "all"
           },
           {
-            "from": "friend",
+            "from": "biscuit",
+            "pose": "happy",
             "text": "Yep! Spot even one P, and stop and ask a grown-up."
           },
           {
             "from": "biscuit",
-            "text": "Let me try!",
-            "pose": "happy"
+            "pose": "celebrate",
+            "text": "Your turn!"
           }
         ]
       }
@@ -165,7 +175,7 @@
     "outro": {
       "pose": "celebrate",
       "title": "Lesson complete!",
-      "speech": "You saved my $4.15! I'm spending it on snacks. Same time tomorrow?",
+      "speech": "You spot scams faster than I ever sent them! Same time tomorrow?",
       "rule": "Got a surprise text that wants something fast? Stop! Show a grown-up, or check the real app yourself.",
       "xp": 15
     },
@@ -215,7 +225,7 @@
       "feedback": {
         "correct": {
           "pose": "happy",
-          "text": "You got it! I almost tapped that link."
+          "text": "You got it! I used to send texts just like that one."
         },
         "incorrect": {
           "pose": "sad",
@@ -294,7 +304,7 @@
       "feedback": {
         "correct": {
           "pose": "happy",
-          "text": "Pretend, Problem, Pressure, Pay. The 4 P's! I'm writing them on my paw."
+          "text": "Pretend, Problem, Pressure, Pay. You know all my old tricks now!"
         },
         "incorrect": {
           "pose": "sad",
@@ -306,11 +316,11 @@
       "id": "q4",
       "type": "real-or-scam",
       "concept": "legit",
-      "prompt": "{name} ordered a toy yesterday. Now he gets this text. Real or scam?",
+      "prompt": "You ordered a toy yesterday. Now you get this text. Real or scam?",
       "context": {
         "emoji": "📦",
-        "label": "{name}'s order",
-        "text": "1 shiny spoon, shipped"
+        "label": "Your order",
+        "text": "1 glow-in-the-dark yo-yo, shipped"
       },
       "message": {
         "sender": "USPS",
@@ -320,7 +330,7 @@
       "feedback": {
         "correct": {
           "pose": "happy",
-          "text": "Real! It doesn't ask me to do anything. No link, no money, no rush."
+          "text": "Real! It doesn't ask you to do anything. No link, no money, no rush."
         },
         "incorrect": {
           "pose": "idle",
@@ -332,7 +342,7 @@
       "id": "q5",
       "type": "chat-reply",
       "concept": "code",
-      "prompt": "What should {name} do?",
+      "prompt": "What should you do?",
       "message": {
         "sender": "Golden Bank Fraud Team",
         "text": "We stopped a weird $892 charge. To unlock your account, text us the 6-digit code we just sent you."
@@ -350,14 +360,14 @@
         },
         {
           "id": "c",
-          "text": "(Don't reply. Call the number on my bank card.)"
+          "text": "(Don't reply. Ask a grown-up to call the bank.)"
         }
       ],
       "answer": "c",
       "feedback": {
         "correct": {
           "pose": "happy",
-          "text": "Yes! Don't text back. Call the number on your card instead."
+          "text": "Yes! Don't text back. A grown-up can call the number on the bank card instead."
         },
         "incorrect": {
           "pose": "shocked",
@@ -369,7 +379,7 @@
       "id": "q6",
       "type": "word-bank",
       "concept": "code",
-      "prompt": "Build {name}'s new rule.",
+      "prompt": "Build {name}'s number one rule.",
       "answer": [
         "Never",
         "share",
@@ -397,7 +407,7 @@
       "feedback": {
         "correct": {
           "pose": "happy",
-          "text": "Never share a code with anyone who texts you. I'm writing it on my trash can lid."
+          "text": "That's my number one rule. I used to ask for codes all the time."
         },
         "incorrect": {
           "pose": "sad",
@@ -409,7 +419,7 @@
       "id": "q7",
       "type": "image-choice",
       "concept": "safe-move",
-      "prompt": "What should {name} do?",
+      "prompt": "What should you do?",
       "message": {
         "sender": "USPS",
         "text": "Your package can't be delivered. Update your address: usps-redelivery.net"
@@ -418,7 +428,7 @@
         {
           "id": "a",
           "emoji": "🔗",
-          "label": "Tap the link and fix his address",
+          "label": "Tap the link and fix your address",
           "feedback": "That link goes to the scammer, not USPS."
         },
         {
@@ -449,7 +459,7 @@
       "id": "q8",
       "type": "multiple-choice",
       "concept": "report",
-      "prompt": "{name} found a scam text. What should he do next?",
+      "prompt": "You found a scam text. What should you do next?",
       "options": [
         {
           "id": "a",
@@ -617,25 +627,25 @@
         "id": "q10-legit",
         "type": "real-or-scam",
         "concept": "legit",
-        "prompt": "{name} just booked a vet checkup. Real or scam?",
+        "prompt": "You just booked a dentist checkup. Real or scam?",
         "context": {
           "emoji": "📅",
-          "label": "{name}'s calendar",
-          "text": "Vet checkup, Tuesday 3:00 PM"
+          "label": "Your calendar",
+          "text": "Dentist checkup, Tuesday 3:00 PM"
         },
         "message": {
-          "sender": "Happy Paws Vet",
-          "text": "Reminder: {name}'s checkup is Tuesday at 3:00 PM. See you then!"
+          "sender": "Bright Smile Dental",
+          "text": "Reminder: your checkup is Tuesday at 3:00 PM. See you then!"
         },
         "answer": "real",
         "feedback": {
           "correct": {
             "pose": "happy",
-            "text": "Real! It matches what {name} did, and it asks for nothing."
+            "text": "Real! It matches what you booked, and it asks for nothing."
           },
           "incorrect": {
             "pose": "idle",
-            "text": "This one's real. It matches his calendar and doesn't ask for anything. Not every text is a scam!"
+            "text": "This one's real. It matches your calendar and doesn't ask for anything. Not every text is a scam!"
           }
         }
       },
@@ -643,7 +653,7 @@
         "id": "q10-code",
         "type": "chat-reply",
         "concept": "code",
-        "prompt": "What should {name} do?",
+        "prompt": "What should you do?",
         "message": {
           "sender": "Unknown number",
           "text": "Hi! I sent my code to your phone by mistake. Can you text it to me?"
@@ -680,7 +690,7 @@
         "id": "q10-safe-move",
         "type": "image-choice",
         "concept": "safe-move",
-        "prompt": "What should {name} do?",
+        "prompt": "What should you do?",
         "message": {
           "sender": "Golden Bank",
           "text": "Your card is frozen. Unfreeze it here: goldenbank-unlock.co"
@@ -763,7 +773,7 @@
       "feedback": {
         "correct": {
           "pose": "celebrate",
-          "text": "Scam! Scammers can use AI to write perfect texts. It's still a surprise problem with a link."
+          "text": "Scam! I never had AI, but today's scammers use it to write perfect texts. It's still a surprise problem with a link."
         },
         "incorrect": {
           "pose": "sad",

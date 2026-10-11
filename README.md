@@ -1,6 +1,6 @@
 # Real or Scam? A lesson concept
 
-This is a mock Duolingo-style lesson built for the "New World Character: Lesson Concept" assignment in a USC Iovine and Young Academy class. It introduces **Pawnzy**, a raccoon who trusts everyone, and teaches beginners how to spot scam texts in a 10-question lesson.
+This is a mock Duolingo-style lesson built for the "New World Character: Lesson Concept" assignment in a USC Iovine and Young Academy class. It introduces **Pawnzy**, a raccoon who used to send scam texts. He quit when one of his texts tricked his niece, and now he teaches kids every trick he used so they can spot scam texts, in a 10-question lesson.
 
 It is a student concept and is not affiliated with or endorsed by Duolingo. It uses no Duolingo logos, characters, fonts, or sounds.
 
@@ -187,15 +187,15 @@ A numbered list of options. `message` is optional.
 
 ## Intro chat
 
-After "Let's find out", Pawnzy texts Duo about the toll text, and Duo explains what scam texts are. It lives under `lesson.introChat`:
+After "Hear my story", Pawnzy owns up to Duo: he forwards one of the toll texts he used to send and explains why he quit. It lives under `lesson.introChat`:
 
 ```json
 "introChat": {
   "friend": { "name": "Duo", "image": "assets/characters/duo.png" },
   "button": "Start lesson",
   "messages": [
-    { "from": "biscuit", "pose": "shocked", "text": "Help!! I got this text.", "forwarded": { "sender": "FasTrak", "text": "..." } },
-    { "from": "friend", "text": "Stop! Don't tap that link." }
+    { "from": "biscuit", "pose": "sad", "text": "I used to send texts like this one.", "forwarded": { "sender": "FasTrak", "text": "..." } },
+    { "from": "friend", "text": "Wait. YOU sent that?!" }
   ]
 }
 ```
@@ -213,7 +213,7 @@ Each message waits for its voice clip, or for enough reading time if sound is of
 
 `lesson.teachChats` holds chats that play in the middle of the lesson, right before the question named in `before`. They teach something new before the learner practices it. They don't count as one of the 10 steps, so the progress bar doesn't move.
 
-The 4 P's chat plays before Q3. It works like the intro chat, plus two extras:
+The 4 P's chat plays before Q3. Pawnzy teaches the 4 tricks every one of his old scam texts used, and Duo asks the questions. It works like the intro chat, plus two extras:
 
 - `example` is a text pinned above the chat, split into `segments`. Segments with a `tag` (`pretend`, `problem`, `pressure`, or `pay`) can light up.
 - In a message, `"showExample": true` reveals the pinned text, `"highlight": "pressure"` lights up that P's part with its label, and `"highlight": "all"` pulses every label at once.
