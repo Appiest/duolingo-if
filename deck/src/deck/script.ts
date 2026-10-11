@@ -3,7 +3,7 @@ export const slides = [
   { id: "real", beats: ["skitText", "fbiWarning"] },
   { id: "scale", beats: ["topContact", "weekly", "losses"] },
   { id: "kids", beats: ["phones", "youngLosses"] },
-  { id: "now", beats: ["aiTypos", "gradeGap"] },
+  { id: "now", beats: ["aiTypos"] },
   { id: "lesson", beats: ["pawnzyLesson", "fourPs", "fades"] },
   { id: "play", beats: ["play"] },
 ] as const;

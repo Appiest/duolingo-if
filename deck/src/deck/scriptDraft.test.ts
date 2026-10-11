@@ -45,8 +45,9 @@ describe("sequence", () => {
 
 describe("renameSpeaker", () => {
   it("renames every line a speaker has, including proposed ones", () => {
-    const withAdd = propose(draft, { id: "a", kind: "add", after: "play", cue: { speaker: "Speaker A", line: "x" } });
-    const renamed = renameSpeaker(withAdd, "Speaker A", "Brendan");
+    const speaker = cues.skitText.speaker;
+    const withAdd = propose(draft, { id: "a", kind: "add", after: "play", cue: { speaker, line: "x" } });
+    const renamed = renameSpeaker(withAdd, speaker, "Brendan");
     expect(renamed.cues.skitText.speaker).toBe("Brendan");
     expect(renamed.proposals[0]).toMatchObject({ cue: { speaker: "Brendan" } });
   });

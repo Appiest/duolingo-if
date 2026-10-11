@@ -86,7 +86,6 @@ export const facts: Record<SlideId, SlideFacts> = {
     title: "Why now",
     figures: [
       { figure: "AI removes typos", counts: "The FBI warns generative AI corrects the mistakes that used to signal a scam.", source: "fbiAi" },
-      { figure: "Grade 6", counts: "Grade listed for Common Sense Education’s phishing lesson, “Don’t Feed the Phish.”", source: "commonSensePhish" },
     ],
     questions: [
       {
