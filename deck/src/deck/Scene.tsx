@@ -2,6 +2,7 @@
 
 import { ScamBubble } from "./parts/ScamBubble";
 import { DrawingScene } from "./scenes/DrawingScene";
+import { EndingScene } from "./scenes/EndingScene";
 import { KidsScene } from "./scenes/KidsScene";
 import { LessonScene } from "./scenes/LessonScene";
 import { NowScene } from "./scenes/NowScene";
@@ -22,6 +23,7 @@ export function Scene({ beat, skitVisual = "backdrop" }: { beat: Beat; skitVisua
       <NowScene beat={beat} />
       <LessonScene beat={beat} />
       <DrawingScene beat={beat} />
+      <EndingScene beat={beat} />
       <PlayScene beat={beat} />
       <ScamBubble beat={beat} />
     </>

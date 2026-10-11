@@ -120,6 +120,7 @@ export const facts: Record<SlideId, SlideFacts> = {
       },
     ],
   },
+  ending: { title: "Let’s keep kids safe from text scams", figures: [], questions: [] },
   play: {
     title: "Play the lesson",
     figures: [],

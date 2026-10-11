@@ -1,11 +1,13 @@
 "use client";
 
 import { MotionConfig } from "motion/react";
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { notesShown, notesShownOnServer, subscribeToNotes, toggleNotes } from "./notes";
 import { Rehearsal } from "./Rehearsal";
 import { Scene } from "./Scene";
-import { slides } from "./script";
+import { slides, type Beat } from "./script";
+import type { SkitVisual } from "./skit";
+import { playPhoneBuzz } from "./sound/phoneBuzz";
 import { Stage } from "./Stage";
 import { beatAt, fit, outlineFor, promptAt, skitVisualAt } from "./steps";
 import { advance, last, retreat, start, toSearch, type Position } from "./timeline";
@@ -17,6 +19,9 @@ export function Deck({ initial }: { initial: Position }) {
   const outline = useMemo(() => outlineFor(showingNotes), [showingNotes]);
   const position = fit(requested, outline);
   const search = toSearch(position);
+  const beat = beatAt(position);
+  const skitVisual = skitVisualAt(position, showingNotes);
+  usePhoneBuzz(beat, skitVisual);
 
   const commands = useMemo(
     () => ({
@@ -40,10 +45,21 @@ export function Deck({ initial }: { initial: Position }) {
         <h1 className="sr-only">Real or Scam? Why kids need to spot scam texts</h1>
         <p className="sr-only" aria-live="polite">{`Slide ${position.slide + 1} of ${slides.length}, beat ${position.beat + 1}`}</p>
         <Stage>
-          <Scene beat={beatAt(position)} skitVisual={skitVisualAt(position, showingNotes)} />
+          <Scene beat={beat} skitVisual={skitVisual} />
         </Stage>
         <Rehearsal prompt={promptAt(position, showingNotes)} shown={showingNotes} />
       </main>
     </MotionConfig>
   );
+}
+
+// Buzzes when the presenter steps onto the Robux text, but not when the deck
+// is opened straight onto it.
+function usePhoneBuzz(beat: Beat, skitVisual: SkitVisual) {
+  const buzzing = beat === "skitStage" && skitVisual === "message";
+  const wasBuzzing = useRef(buzzing);
+  useEffect(() => {
+    if (buzzing && !wasBuzzing.current) playPhoneBuzz();
+    wasBuzzing.current = buzzing;
+  }, [buzzing]);
 }
