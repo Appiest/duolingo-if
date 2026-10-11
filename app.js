@@ -271,7 +271,7 @@ function showQuestion() {
   const shell = session.shell;
   session.question = question;
   session.phase = "answering";
-  session.image = characterImage("idle", "biscuit-prompt", "portrait");
+  session.image = characterImage("thinking", "biscuit-prompt", "portrait");
   session.exercise = renderExercise(question, { lesson, onChange: updateCheckButton, onComplete: finishQuestion, playSound });
 
   const badgeNode = questionBadge(badge);

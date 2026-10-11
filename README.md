@@ -269,14 +269,16 @@ The `combo` sound plays at each number in `ui.comboMilestones`.
 
 ## Pawnzy's art
 
-The team's original exports live untouched in `assets/source/pawnzy/`. Two scripts turn them into the art the lesson and the deck use:
+The team's original exports live untouched in `assets/source/pawnzy/`. Three scripts turn them into the art the lesson and the deck use:
 
 1. `tools/cut_out_art.py` upscales each piece 4× with Real-ESRGAN's `realesr-animevideov3` model, which keeps flat cartoon art faithful, then cuts it out as a transparent PNG.
-2. `tools/make_expressions.py` draws Pawnzy's other faces (sad, shocked, celebrate) onto the team's happy face. It finds the eyes and mouth, paints over them with colors sampled from the art, and draws new features in the same flat style.
+2. `tools/make_expressions.py` draws the shocked and celebrate faces onto the team's happy face. It finds the eyes and mouth, paints over them with colors sampled from the art, and draws new features in the same flat style.
+3. `tools/layered_expressions.py` builds the thinking and sad poses from the team's layered exports in `assets/source/pawnzy/thinking/` and `assets/source/pawnzy/sad/`. Each folder has one PNG per layer plus `merged.png`, the whole drawing flattened. The full body is `merged.png` cropped, and the head keeps only the parts covered by the head layers.
 
 | Mood | Full body (big screens) | Head (beside questions and over the feedback bar) |
 | --- | --- | --- |
 | idle, happy | `pawnzy-standing.png` | `pawnzy-head-front.png` |
+| thinking (beside every question while the learner answers) | `pawnzy-standing-thinking.png` | `pawnzy-head-front-thinking.png` |
 | sad | `pawnzy-standing-sad.png` | `pawnzy-head-front-sad.png` |
 | shocked | `pawnzy-standing-shocked.png` | `pawnzy-head-front-shocked.png` |
 | celebrate | `pawnzy-standing-celebrate.png` | `pawnzy-head-front-celebrate.png` |
@@ -294,6 +296,7 @@ To update the art:
 ```sh
 python3 tools/cut_out_art.py --upscaler /path/to/realesrgan-ncnn-vulkan
 python3 tools/make_expressions.py
+python3 tools/layered_expressions.py
 ```
 
 The scripts need `numpy`, `scipy` and `Pillow`.

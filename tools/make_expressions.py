@@ -3,7 +3,8 @@
 
 Run after tools/cut_out_art.py:  python3 tools/make_expressions.py
 
-The team drew one face (happy). This finds that face's eyes, pupils and mouth
+The team drew happy, sad and thinking themselves (see
+tools/layered_expressions.py for the last two). This finds that face's eyes, pupils and mouth
 in the front head and the standing pose, paints over them with colors sampled
 from the art, and draws new features in the same flat style: black features,
 white eyes, the dark mask color for lids. Writes, for each expression:
@@ -32,7 +33,6 @@ SUPERSAMPLE = 4
 
 INK = (14, 14, 16)
 TONGUE = (255, 134, 154)
-TEAR = (128, 196, 245)
 BASES = ["pawnzy-head-front", "pawnzy-standing"]
 
 
@@ -161,32 +161,6 @@ def shocked(canvas, face, colors):
     canvas.ellipse(mx, my + 6, mouth_width * 0.2, mouth_width * 0.27, INK)
 
 
-def sad(canvas, face, colors):
-    eyes = canvas.with_clip(None)
-    for side, eye in enumerate(face["eyes"]):
-        (cx, cy), rx, ry = eye_size(eye)
-        outward = -1 if side == 0 else 1
-        eyes.ellipse(cx, cy, rx * 0.95, ry * 0.95, (255, 255, 255))
-        eyes.ellipse(cx - outward * rx * 0.08, cy + ry * 0.3, rx * 0.52, ry * 0.52, INK)
-        eyes.ellipse(cx - outward * rx * 0.24, cy + ry * 0.14, rx * 0.14, ry * 0.14, (255, 255, 255))
-    eyes.blend()
-    lids = canvas.with_clip(colors["mask_area"])
-    for side, eye in enumerate(face["eyes"]):
-        (cx, cy), rx, ry = eye_size(eye)
-        outward = -1 if side == 0 else 1
-        inner = (cx - outward * rx * 1.4, cy - ry * 0.62)
-        outer = (cx + outward * rx * 1.4, cy + ry * 0.2)
-        lids.polygon([inner, outer, (outer[0], cy - ry * 2), (inner[0], cy - ry * 2)], colors["mask"])
-    lids.blend()
-    (mx, my), mouth_width = center(face["mouth"]["box"]), face["mouth"]["box"][2] - face["mouth"]["box"][0]
-    stroke = (face["mouth"]["box"][3] - face["mouth"]["box"][1]) * 0.36
-    canvas.curve((mx - mouth_width * 0.36, my + 16), (mx, my - 26), (mx + mouth_width * 0.36, my + 16), stroke, INK)
-    (ex, ey), erx, ery = eye_size(face["eyes"][0])
-    tear_x, tear_y = ex + erx * 0.2, ey + ery * 1.25
-    canvas.polygon([(tear_x, tear_y - ery * 0.42), (tear_x - erx * 0.2, tear_y), (tear_x + erx * 0.2, tear_y)], TEAR)
-    canvas.ellipse(tear_x, tear_y + erx * 0.02, erx * 0.2, erx * 0.2, TEAR)
-
-
 def celebrate(canvas, face, colors):
     for eye in face["eyes"]:
         (cx, cy), rx, ry = eye_size(eye)
@@ -200,7 +174,7 @@ def celebrate(canvas, face, colors):
     canvas.ellipse(mx, mouth_top + mouth_width * 0.43, mouth_width * 0.26, mouth_width * 0.14, TONGUE)
 
 
-EXPRESSIONS = {"shocked": shocked, "sad": sad, "celebrate": celebrate}
+EXPRESSIONS = {"shocked": shocked, "celebrate": celebrate}
 
 
 def make(base, expression, draw):
