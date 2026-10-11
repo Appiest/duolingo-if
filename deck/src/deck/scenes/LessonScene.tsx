@@ -6,6 +6,7 @@ import { assetPath } from "../assetPath";
 import { grid } from "../geometry";
 import { Headline } from "../parts/Headline";
 import { Show } from "../parts/Show";
+import { SourceNote } from "../parts/SourceNote";
 import { sceneMove } from "../motion";
 import type { Beat } from "../script";
 
@@ -40,6 +41,7 @@ export function LessonScene({ beat }: { beat: Beat }) {
 
       <FadeChart shown={beat === "fades"} />
       <StreakWeek shown={beat === "fades"} />
+      <SourceNote when={beat === "fades"} source="soupsStudy" />
     </>
   );
 }
