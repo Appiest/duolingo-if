@@ -1,6 +1,7 @@
 "use client";
 
 import { ScamBubble } from "./parts/ScamBubble";
+import { DrawingScene } from "./scenes/DrawingScene";
 import { KidsScene } from "./scenes/KidsScene";
 import { LessonScene } from "./scenes/LessonScene";
 import { NowScene } from "./scenes/NowScene";
@@ -19,6 +20,7 @@ export function Scene({ beat }: { beat: Beat }) {
       <KidsScene beat={beat} />
       <NowScene beat={beat} />
       <LessonScene beat={beat} />
+      <DrawingScene beat={beat} />
       <PlayScene beat={beat} />
       <ScamBubble beat={beat} />
     </>

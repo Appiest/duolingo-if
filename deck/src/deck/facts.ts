@@ -96,6 +96,7 @@ export const facts: Record<SlideId, SlideFacts> = {
       },
     ],
   },
+  drawing: { title: "How we drew Pawnzy", figures: [], questions: [] },
   lesson: {
     title: "Pawnzy’s lesson",
     figures: [

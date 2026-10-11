@@ -273,7 +273,7 @@ The team's original exports live untouched in `assets/source/pawnzy/`. Three scr
 
 1. `tools/cut_out_art.py` upscales each piece 4× with Real-ESRGAN's `realesr-animevideov3` model, which keeps flat cartoon art faithful, then cuts it out as a transparent PNG.
 2. `tools/make_expressions.py` draws the shocked and celebrate faces onto the team's happy face. It finds the eyes and mouth, paints over them with colors sampled from the art, and draws new features in the same flat style.
-3. `tools/layered_expressions.py` builds the thinking and sad poses from the team's layered exports in `assets/source/pawnzy/thinking/` and `assets/source/pawnzy/sad/`. Each folder has one PNG per layer plus `merged.png`, the whole drawing flattened. The full body is `merged.png` cropped, and the head keeps only the parts covered by the head layers.
+3. `tools/layered_expressions.py` builds the thinking and sad poses from the team's layered exports in `assets/source/pawnzy/thinking/` and `assets/source/pawnzy/sad/`. Each folder has one PNG per layer plus `merged.png`, the whole drawing flattened. The full body is `merged.png` cropped, and the head keeps only the parts covered by the head layers. It also saves each layer cropped in `assets/characters/layers/` and writes `deck/src/deck/layers.json`, which the deck's "How we drew Pawnzy" slide uses to fly the layers together in the team's stacking order.
 
 | Mood | Full body (big screens) | Head (beside questions and over the feedback bar) |
 | --- | --- | --- |
