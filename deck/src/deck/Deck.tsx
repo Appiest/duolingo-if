@@ -7,7 +7,7 @@ import { Rehearsal } from "./Rehearsal";
 import { Scene } from "./Scene";
 import { slides, type Beat } from "./script";
 import type { SkitVisual } from "./skit";
-import { playPhoneBuzz } from "./sound/phoneBuzz";
+import { playTextAlert } from "./sound/textAlert";
 import { Stage } from "./Stage";
 import { beatAt, fit, outlineFor, promptAt, skitVisualAt } from "./steps";
 import { advance, last, retreat, start, toSearch, type Position } from "./timeline";
@@ -21,7 +21,7 @@ export function Deck({ initial }: { initial: Position }) {
   const search = toSearch(position);
   const beat = beatAt(position);
   const skitVisual = skitVisualAt(position, showingNotes);
-  usePhoneBuzz(beat, skitVisual);
+  useTextAlert(beat, skitVisual);
 
   const commands = useMemo(
     () => ({
@@ -53,13 +53,13 @@ export function Deck({ initial }: { initial: Position }) {
   );
 }
 
-// Buzzes when the presenter steps onto the Robux text, but not when the deck
+// Chimes when the presenter steps onto the Robux text, but not when the deck
 // is opened straight onto it.
-function usePhoneBuzz(beat: Beat, skitVisual: SkitVisual) {
-  const buzzing = beat === "skitStage" && skitVisual === "message";
-  const wasBuzzing = useRef(buzzing);
+function useTextAlert(beat: Beat, skitVisual: SkitVisual) {
+  const arriving = beat === "skitStage" && skitVisual === "message";
+  const wasArriving = useRef(arriving);
   useEffect(() => {
-    if (buzzing && !wasBuzzing.current) playPhoneBuzz();
-    wasBuzzing.current = buzzing;
-  }, [buzzing]);
+    if (arriving && !wasArriving.current) playTextAlert();
+    wasArriving.current = arriving;
+  }, [arriving]);
 }
