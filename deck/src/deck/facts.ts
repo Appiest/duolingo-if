@@ -8,7 +8,7 @@ export type SlideFacts = { title: string; figures: Figure[]; questions: Question
 export const facts: Record<SlideId, SlideFacts> = {
   skit: { title: "Skit backdrop", figures: [], questions: [] },
   real: {
-    title: "The text from our skit is real",
+    title: "Toll texts like this one are real",
     figures: [
       {
         figure: "2,000+ complaints",
@@ -18,7 +18,13 @@ export const facts: Record<SlideId, SlideFacts> = {
     ],
     questions: [
       {
-        question: "Is the skit’s FasTrak text a real message?",
+        question: "Is the skit’s free Robux text realistic?",
+        answer:
+          "Yes. Roblox’s own help center says any free Robux offer is a scam: “There is no such thing as free Robux or subscription offers, tricks, or codes.”",
+        sources: ["robloxFreeRobux"],
+      },
+      {
+        question: "Is the slide’s FasTrak text a real message?",
         answer:
           "It’s written in the same shape as the toll texts the FBI warned about: a small unpaid toll, a late fee and a link. The FBI’s sample text reads “We’ve noticed an outstanding toll amount of $12.51 on your record. To avoid a late fee of $50.00, visit…”",
         sources: ["fbiToll"],

@@ -1,6 +1,12 @@
 export type Source = { short: string; citation: string; url: string; quote?: string };
 
 export const sources = {
+  robloxFreeRobux: {
+    short: "Roblox Help Center, Free Robux or Subscription Generators",
+    citation: "Roblox Help Center, Free Robux or Subscription Generators.",
+    url: "https://en.help.roblox.com/hc/en-us/articles/204262550-Free-Robux-or-Subscription-Generators",
+    quote: "There is no such thing as free Robux or subscription offers, tricks, or codes.",
+  },
   fbiToll: {
     short: "FBI public service announcement, April 12, 2024",
     citation: "FBI IC3, PSA I-041224-PSA: Smishing Scam Regarding Debt for Unpaid Tolls, April 12, 2024.",

@@ -28,6 +28,16 @@
   --color-p-pay: #a16207;
   --color-p-pay-wash: #fef3c7;
   --color-rehearsal: #1f2328;
+  --color-draft: #8a5a00;
+  --color-draft-wash: #fff6dc;
+  --color-draft-hatch: #f5e2a8;
+  --color-speaker-1: #6f6f6f;
+  --color-speaker-2: #0d6f9e;
+  --color-speaker-3: #8e44c9;
+  --color-speaker-4: #c2410c;
+  --color-speaker-5: #3f7d00;
+  --color-speaker-6: #a16207;
+  --color-speaker-7: #be185d;
 
   --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
 
@@ -56,6 +66,10 @@ html,
 body {
   background: var(--color-stage);
   color: var(--color-ink);
+}
+
+@utility hatch {
+  background-image: repeating-linear-gradient(-45deg, var(--color-draft-hatch) 0 2px, transparent 2px 12px);
 }
 
 @media print {

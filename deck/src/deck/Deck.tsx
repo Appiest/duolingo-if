@@ -5,32 +5,34 @@ import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { notesShown, notesShownOnServer, subscribeToNotes, toggleNotes } from "./notes";
 import { Rehearsal } from "./Rehearsal";
 import { Scene } from "./Scene";
-import { outline, slides } from "./script";
+import { slides } from "./script";
 import { Stage } from "./Stage";
+import { beatAt, fit, outlineFor, promptAt } from "./steps";
 import { advance, last, retreat, start, toSearch, type Position } from "./timeline";
 import { useDeckControls } from "./useDeckControls";
 
 export function Deck({ initial }: { initial: Position }) {
-  const [position, setPosition] = useState(initial);
+  const [requested, setPosition] = useState(initial);
   const showingNotes = useSyncExternalStore(subscribeToNotes, notesShown, notesShownOnServer);
+  const outline = useMemo(() => outlineFor(showingNotes), [showingNotes]);
+  const position = fit(requested, outline);
+  const search = toSearch(position);
 
   const commands = useMemo(
     () => ({
-      next: () => setPosition((current) => advance(current, outline)),
-      previous: () => setPosition((current) => retreat(current, outline)),
+      next: () => setPosition((current) => advance(fit(current, outline), outline)),
+      previous: () => setPosition((current) => retreat(fit(current, outline), outline)),
       first: () => setPosition(start),
       last: () => setPosition(last(outline)),
       notes: toggleNotes,
     }),
-    [],
+    [outline],
   );
   useDeckControls(commands);
 
   useEffect(() => {
-    window.history.replaceState(null, "", `${window.location.pathname}${toSearch(position)}`);
-  }, [position]);
-
-  const beat = slides[position.slide].beats[position.beat];
+    window.history.replaceState(null, "", `${window.location.pathname}${search}`);
+  }, [search]);
 
   return (
     <MotionConfig reducedMotion="user">
@@ -38,9 +40,9 @@ export function Deck({ initial }: { initial: Position }) {
         <h1 className="sr-only">Real or Scam? Why kids need to spot scam texts</h1>
         <p className="sr-only" aria-live="polite">{`Slide ${position.slide + 1} of ${slides.length}, beat ${position.beat + 1}`}</p>
         <Stage>
-          <Scene beat={beat} />
+          <Scene beat={beatAt(position)} />
         </Stage>
-        <Rehearsal position={position} beat={beat} shown={showingNotes} />
+        <Rehearsal prompt={promptAt(position, showingNotes)} shown={showingNotes} />
       </main>
     </MotionConfig>
   );

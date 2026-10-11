@@ -5,6 +5,8 @@ const basePath = process.env.PAGES_BASE_PATH ?? "";
 
 const nextConfig: NextConfig = {
   devIndicators: false,
+  // The /script page saves through a *.dev.ts route, which a static export cannot serve.
+  pageExtensions: basePath ? ["tsx", "ts"] : ["tsx", "ts", "dev.ts"],
   ...(basePath && {
     output: "export",
     basePath,

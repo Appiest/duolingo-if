@@ -11,7 +11,7 @@ export const slides = [
 export type SlideId = (typeof slides)[number]["id"];
 export type Beat = (typeof slides)[number]["beats"][number];
 
-export const outline = slides.map((slide) => slide.beats.length);
+export const skitSlide = slides.findIndex((slide) => slide.id === "skit");
 
 const beatOrder: readonly Beat[] = slides.flatMap((slide) => slide.beats);
 
