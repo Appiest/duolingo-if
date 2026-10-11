@@ -46,20 +46,33 @@ export function LessonScene({ beat }: { beat: Beat }) {
 
 const FADE_POINTS = [
   { label: "Before", x: 60, lift: 0 },
-  { label: "After", x: 390, lift: 14 },
-  { label: "4 weeks", x: 720, lift: 0 },
+  { label: "Right after", x: 390, lift: 14 },
+  { label: "4 weeks later", x: 720, lift: 0 },
 ];
 
+const fadeY = (lift: number) => 300 - lift * 16;
+const fadeLine = FADE_POINTS.map((point, index) => `${index ? "L" : "M"}${point.x} ${fadeY(point.lift)}`).join(" ");
+const drawLine = { duration: 1.4, ease: [0.2, 0, 0, 1] as const };
+
+// The study measured kids' scam-spotting scores, so the chart says so and
+// marks where the gain ends up.
 function FadeChart({ shown }: { shown: boolean }) {
-  const y = (lift: number) => 360 - lift * 18;
-  const path = FADE_POINTS.map((point, index) => `${index ? "L" : "M"}${point.x} ${y(point.lift)}`).join(" ");
+  const end = FADE_POINTS[FADE_POINTS.length - 1];
   return (
     <Show when={shown} delay={0.1} className="absolute" style={{ left: grid.left, top: PANEL.top, width: PANEL.width }}>
       <p className="text-headline font-black text-ink">One lesson</p>
-      <svg viewBox={`0 0 ${PANEL.width} 440`} width={PANEL.width} height={440} className="mt-24 overflow-visible">
-        <line x1={0} x2={PANEL.width} y1={y(0)} y2={y(0)} stroke="var(--color-line)" strokeWidth={4} strokeDasharray="10 12" />
+      <p className="mt-4 text-lede font-extrabold text-ink-muted">Kids’ scam-spotting score</p>
+      <svg viewBox={`0 0 ${PANEL.width} 400`} width={PANEL.width} height={400} className="mt-16 overflow-visible">
+        <line x1={0} x2={PANEL.width} y1={fadeY(0)} y2={fadeY(0)} stroke="var(--color-line)" strokeWidth={4} strokeDasharray="10 12" />
         <motion.path
-          d={path}
+          d={`${fadeLine} Z`}
+          fill="var(--color-blue)"
+          initial={false}
+          animate={{ opacity: shown ? 0.12 : 0 }}
+          transition={{ duration: 0.6, delay: shown ? 1.2 : 0 }}
+        />
+        <motion.path
+          d={fadeLine}
           fill="none"
           stroke="var(--color-blue)"
           strokeWidth={12}
@@ -67,15 +80,30 @@ function FadeChart({ shown }: { shown: boolean }) {
           strokeLinejoin="round"
           initial={false}
           animate={{ pathLength: shown ? 1 : 0 }}
-          transition={{ duration: 1.4, ease: [0.2, 0, 0, 1], delay: shown ? 0.4 : 0 }}
+          transition={{ ...drawLine, delay: shown ? 0.4 : 0 }}
         />
         {FADE_POINTS.map((point) => (
           <g key={point.label}>
-            <circle cx={point.x} cy={y(point.lift)} r={16} fill="var(--color-blue)" />
-            <text x={point.x} y={y(0) + 64} textAnchor="middle" className="fill-ink-muted text-[30px] font-extrabold">{point.label}</text>
+            <circle cx={point.x} cy={fadeY(point.lift)} r={16} fill="var(--color-blue)" />
+            <text x={point.x} y={fadeY(0) + 64} textAnchor="middle" className="fill-ink-muted text-[30px] font-extrabold">
+              {point.label}
+            </text>
           </g>
         ))}
-        <text x={390} y={y(14) - 40} textAnchor="middle" className="fill-blue-text text-[56px] font-black">+14%</text>
+        <text x={390} y={fadeY(14) - 40} textAnchor="middle" className="fill-blue-text text-[56px] font-black">
+          +14%
+        </text>
+        <motion.text
+          x={end.x}
+          y={fadeY(0) + 108}
+          textAnchor="middle"
+          className="fill-red-text text-[32px] font-black"
+          initial={false}
+          animate={{ opacity: shown ? 1 : 0 }}
+          transition={{ duration: 0.4, delay: shown ? 1.6 : 0 }}
+        >
+          Back to the start
+        </motion.text>
       </svg>
     </Show>
   );
