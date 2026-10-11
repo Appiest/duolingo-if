@@ -9,9 +9,11 @@ import type { SkitVisual } from "../../skit";
 import { ROBUX_LINK, ROBUX_PARTS, ROBUX_SENDER } from "./robuxText";
 import { useTicker } from "./useTicker";
 
-// The team's phone drawing is 613px square; its screen is the white area below.
+// The team's phone drawing is 613px square. Its hand-drawn screen leans about
+// 1.9 degrees clockwise, measured from the white area's corners at (195, 71),
+// (439, 79), (430, 484) and (177, 476), so the overlay is turned to match.
 const ART = 613;
-const SCREEN = { x: 177, y: 66, width: 268, height: 426 };
+const SCREEN = { centerX: 310, centerY: 277.5, width: 242, height: 400, tilt: 1.9 };
 const ZOOM = 1.62;
 const SIDE = ART * ZOOM;
 
@@ -44,8 +46,14 @@ export function Phone({ visual }: { visual: SkitVisual }) {
       >
         <img src={assetPath("/characters/phone.png")} alt="" width={SIDE} height={SIDE} className="absolute inset-0" />
         <div
-          className="absolute overflow-hidden rounded-[30px] bg-white"
-          style={{ left: SCREEN.x * ZOOM, top: SCREEN.y * ZOOM, width: SCREEN.width * ZOOM, height: SCREEN.height * ZOOM }}
+          className="absolute overflow-hidden rounded-[26px] bg-white"
+          style={{
+            left: (SCREEN.centerX - SCREEN.width / 2) * ZOOM,
+            top: (SCREEN.centerY - SCREEN.height / 2) * ZOOM,
+            width: SCREEN.width * ZOOM,
+            height: SCREEN.height * ZOOM,
+            rotate: `${SCREEN.tilt}deg`,
+          }}
         >
           <ScreenLayer shown={visual === "message"}>
             <MessageScreen shown={visual === "message"} />
