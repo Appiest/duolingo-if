@@ -453,7 +453,7 @@ function showComplete() {
     tiles,
     rule: el("p", { class: "rule-card" }, outro.rule),
     actions: el("div", { class: "complete-actions" },
-      el("button", { type: "button", class: "btn btn-primary btn-wide", onClick: startLesson }, "Continue"),
+      el("button", { type: "button", class: "btn btn-primary btn-wide", onClick: returnToStart }, "Continue"),
       reviewSection(misses)),
   };
 
@@ -470,7 +470,13 @@ function showComplete() {
   appRoot.querySelector(".screen-complete").focus({ preventScroll: true });
   const celebration = createCelebration({ parts, cues: celebrationCues(tiles.length, outro.speech), reducedMotion: reducedMotion.matches });
   celebration.play();
-  primaryAction = () => celebration.skipToEnd() || startLesson();
+  primaryAction = () => celebration.skipToEnd() || returnToStart();
+}
+
+function returnToStart() {
+  stopVoice();
+  showIntro();
+  window.scrollTo(0, 0);
 }
 
 function celebrationCues(tileCount, speech) {
