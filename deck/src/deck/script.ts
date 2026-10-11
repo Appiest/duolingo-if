@@ -5,7 +5,7 @@ export const slides = [
   { id: "kids", beats: ["phones", "youngLosses"] },
   { id: "now", beats: ["aiTypos"] },
   { id: "lesson", beats: ["pawnzyLesson", "fourPs", "fades"] },
-  { id: "drawing", beats: ["drawLayers", "drawPoses"] },
+  { id: "drawing", beats: ["drawSketch", "drawLayers", "drawPoses"] },
   { id: "play", beats: ["play"] },
 ] as const;
 

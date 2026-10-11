@@ -25,15 +25,45 @@ const PLACES: Record<Expression, Partial<Record<Beat, number>>> = {
   sad: { drawPoses: 1360 },
 };
 
+const DRAWING_BEATS: readonly Beat[] = ["drawSketch", "drawLayers", "drawPoses"];
+
 export function DrawingScene({ beat }: { beat: Beat }) {
-  const drawing = beat === "drawLayers" || beat === "drawPoses";
   return (
     <>
-      <Headline when={drawing}>How we drew Pawnzy</Headline>
+      <Headline when={DRAWING_BEATS.includes(beat)}>How we drew Pawnzy</Headline>
+      {SKETCHES.map((sketch, index) => (
+        <Sketch key={sketch.name} sketch={sketch} shown={beat === "drawSketch"} delay={0.3 + index * 0.9} />
+      ))}
       <Figure expression="thinking" beat={beat} />
       <Figure expression="sad" beat={beat} />
       <LayerPanel shown={beat === "drawLayers"} />
     </>
+  );
+}
+
+// The team's sketch of both poses, split into one trimmed image per pose and
+// drawn at one shared scale so their sizes stay true to each other.
+const SKETCHES = [
+  { name: "thinking", width: 766, height: 952, center: 560 },
+  { name: "sad", width: 947, height: 987, center: 1360 },
+] as const;
+const SKETCH_SCALE = FIGURE_HEIGHT / 987;
+const SKETCH_BOTTOM = FIGURE_TOP + FIGURE_HEIGHT;
+
+// Wipes in left to right, as if the pencil were still moving.
+function Sketch({ sketch, shown, delay }: { sketch: (typeof SKETCHES)[number]; shown: boolean; delay: number }) {
+  const width = sketch.width * SKETCH_SCALE;
+  const height = sketch.height * SKETCH_SCALE;
+  return (
+    <motion.img
+      src={assetPath(`/sketches/pawnzy-${sketch.name}.png`)}
+      alt=""
+      className="pointer-events-none absolute max-w-none"
+      style={{ left: sketch.center - width / 2, top: SKETCH_BOTTOM - height, width, height }}
+      initial={false}
+      animate={shown ? { clipPath: "inset(0% 0% 0% 0%)", opacity: 1 } : { clipPath: "inset(0% 100% 0% 0%)", opacity: 0 }}
+      transition={{ clipPath: { duration: shown ? 1.3 : 0, ease: "easeInOut", delay: shown ? delay : 0.4 }, opacity: { duration: 0.35, delay: shown ? delay : 0 } }}
+    />
   );
 }
 
