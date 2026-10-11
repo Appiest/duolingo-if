@@ -2,12 +2,14 @@
   {
     "id": "skit-01",
     "speaker": "Alexis (Kid)",
-    "line": "(opening a box) My very first phone! I’m finally a real middle schooler."
+    "line": "(opening a box) My very first phone! I’m finally a real middle schooler.",
+    "visual": "backdrop"
   },
   {
     "id": "skit-02",
     "speaker": "Alexis (Kid)",
-    "line": "(phone buzzes) Ooh, I got a text! Ooh, what if it's Harry Styles?!"
+    "line": "(phone buzzes) Ooh, I got a text! Ooh, what if it's Harry Styles?!",
+    "visual": "message"
   },
   {
     "id": "skit-03",
@@ -22,12 +24,14 @@
   {
     "id": "skit-05",
     "speaker": "Alexis (Kid)",
-    "line": "(tapping) It just needs my username and password to send them. Easy!"
+    "line": "(tapping) It just needs my username and password to send them. Easy!",
+    "visual": "login"
   },
   {
     "id": "skit-06",
     "speaker": "Brendan (Pawnzy)",
-    "line": "(swooping in) Stooop! Don’t type that in!"
+    "line": "(swooping in) Stooop! Don’t type that in!",
+    "visual": "swoop"
   },
   {
     "id": "skit-07",
@@ -37,7 +41,8 @@
   {
     "id": "skit-08",
     "speaker": "Brendan (Pawnzy)",
-    "line": "I’m Pawnzy. I used to be a scammer. I sent texts exactly like that one."
+    "line": "I’m Pawnzy. I used to be a scammer. I sent texts exactly like that one.",
+    "visual": "backstory"
   },
   {
     "id": "skit-08b",
@@ -52,7 +57,8 @@
   {
     "id": "skit-09",
     "speaker": "Alexis (Kid)",
-    "line": "But it says Roblox. Roblox is real."
+    "line": "But it says Roblox. Roblox is real.",
+    "visual": "flags"
   },
   {
     "id": "skit-10",
@@ -87,7 +93,8 @@
   {
     "id": "skit-16",
     "speaker": "Brendan (Pawnzy)",
-    "line": "Don’t tap the link, and never share your password. Show a grown-up instead."
+    "line": "Don’t tap the link, and never share your password. Show a grown-up instead.",
+    "visual": "safe"
   },
   {
     "id": "skit-17",

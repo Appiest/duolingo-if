@@ -26,7 +26,7 @@ export function LineEditor({ cue, label, onChange, onSplit, autoFocus, actions }
 
   return (
     <div className="min-w-0 flex-1">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
         <SpeakerPicker speaker={cue.speaker} onPick={(speaker) => onChange({ speaker })} />
         {actions}
         <span className="ml-auto text-sm font-bold text-ink-faint tabular-nums" title="Estimated at 150 words a minute">
@@ -54,7 +54,7 @@ function SpeakerPicker({ speaker, onPick }: { speaker: string; onPick: (speaker:
   const { speakers, editable } = useScript();
   const color = speakerColor(speakers, speaker);
   return (
-    <label className="relative inline-flex items-center gap-2 rounded-full py-1 pr-7 pl-2.5 text-sm font-extrabold hover:bg-stage-sunken has-focus-visible:ring-2 has-focus-visible:ring-blue/60" style={{ color }}>
+    <label className="relative inline-flex shrink-0 items-center gap-2 rounded-full py-1 pr-7 pl-2.5 whitespace-nowrap text-sm font-extrabold hover:bg-stage-sunken has-focus-visible:ring-2 has-focus-visible:ring-blue/60" style={{ color }}>
       <span className="size-2.5 rounded-full" style={{ backgroundColor: color }} aria-hidden />
       <span className="sr-only">Speaker</span>
       {speaker}

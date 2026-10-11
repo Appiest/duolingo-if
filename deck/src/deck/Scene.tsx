@@ -10,11 +10,12 @@ import { RealScene } from "./scenes/RealScene";
 import { ScaleScene } from "./scenes/ScaleScene";
 import { SkitScene } from "./scenes/SkitScene";
 import type { Beat } from "./script";
+import type { SkitVisual } from "./skit";
 
-export function Scene({ beat }: { beat: Beat }) {
+export function Scene({ beat, skitVisual = "backdrop" }: { beat: Beat; skitVisual?: SkitVisual }) {
   return (
     <>
-      <SkitScene beat={beat} />
+      <SkitScene beat={beat} visual={skitVisual} />
       <RealScene beat={beat} />
       <ScaleScene beat={beat} />
       <KidsScene beat={beat} />

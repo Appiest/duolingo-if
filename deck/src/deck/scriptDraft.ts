@@ -138,7 +138,7 @@ export function reviseProposal(draft: Draft, revised: Proposal): Draft {
 }
 
 // Skit lines change no slides, so edits to them apply straight away.
-export function editSkitLine(draft: Draft, id: string, change: Partial<Cue>): Draft {
+export function editSkitLine(draft: Draft, id: string, change: Partial<SkitLine>): Draft {
   return { ...draft, skit: draft.skit.map((line) => (line.id === id ? { ...line, ...change } : line)) };
 }
 

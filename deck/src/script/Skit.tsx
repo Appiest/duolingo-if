@@ -1,8 +1,8 @@
 "use client";
 
-import { ArrowCounterClockwise, Plus, Scissors, Trash } from "@phosphor-icons/react";
+import { ArrowCounterClockwise, MonitorPlay, Plus, Scissors, Trash } from "@phosphor-icons/react";
 import { addSkitLine, editSkitLine, formatDuration, removeSkitLine, splitSkitLine, type Draft, type Row } from "@/deck/scriptDraft";
-import type { SkitLine } from "@/deck/skit";
+import { skitSegments, skitVisualNames, skitVisuals, type SkitLine, type SkitSegment, type SkitVisual } from "@/deck/skit";
 import { skitSlide, slides } from "@/deck/script";
 import { LineEditor } from "./LineEditor";
 import { Action, Actions } from "./Rows";
@@ -12,14 +12,28 @@ import type { Undo } from "./useDraft";
 
 type SkitRow = Extract<Row, { kind: "skit" }>;
 
+// Lines are grouped under the visual that's up behind them, so each group
+// sits beside a thumbnail of that visual.
 export function SkitLines({ rows, seconds }: { rows: SkitRow[]; seconds: number }) {
+  const segments = skitSegments(rows.map((row) => row.line));
   return (
-    <div className="mt-3 grid gap-4 p-3 sm:grid-cols-[240px_1fr] sm:gap-6">
+    <div className="mt-3 flex flex-col gap-6">
+      <p className="px-3 text-sm font-bold text-ink-muted tabular-nums" title="Estimated at 150 words a minute">
+        Skit runs about {formatDuration(seconds)}
+      </p>
+      {segments.map((segment) => (
+        <SkitSegmentGroup key={rows[segment.first].line.id} segment={segment} rows={rows.slice(segment.first, segment.last + 1)} />
+      ))}
+    </div>
+  );
+}
+
+function SkitSegmentGroup({ segment, rows }: { segment: SkitSegment; rows: SkitRow[] }) {
+  return (
+    <div className="grid gap-4 px-3 sm:grid-cols-[240px_1fr] sm:gap-6">
       <div className="sm:sticky sm:top-36 sm:self-start">
-        <Thumbnail beat={slides[skitSlide].beats[0]} position={{ slide: skitSlide, beat: 0 }} />
-        <p className="mt-3 text-sm font-bold text-ink-muted tabular-nums" title="Estimated at 150 words a minute">
-          Skit runs about {formatDuration(seconds)}
-        </p>
+        <Thumbnail beat={slides[skitSlide].beats[0]} position={{ slide: skitSlide, beat: segment.first }} skitVisual={segment.visual} />
+        <p className="mt-2 text-sm font-bold text-ink-muted">{skitVisualNames[segment.visual]}</p>
       </div>
       <ol className="flex flex-col gap-1">
         {rows.map((row) => (
@@ -43,19 +57,36 @@ function SkitLineRow({ line, number }: { line: SkitLine; number: number }) {
         autoFocus={freshId === line.id}
         actions={
           <Actions className="">
-            <Action icon={<Scissors size={16} weight="bold" />} onClick={() => split(0)}>
-              Split
-            </Action>
-            <Action icon={<Plus size={16} weight="bold" />} onClick={() => create((draft, id) => addSkitLine(draft, line.id, id, otherSpeaker(draft, line)))}>
-              Add below
-            </Action>
-            <Action icon={<Trash size={16} weight="bold" />} onClick={() => change((draft) => removeSkitLine(draft, line.id), `Removed skit line ${number}`)}>
-              Remove
-            </Action>
+            <Action icon={<Scissors size={16} weight="bold" />} onClick={() => split(0)} label="Split line" iconOnly />
+            <Action icon={<Plus size={16} weight="bold" />} onClick={() => create((draft, id) => addSkitLine(draft, line.id, id, otherSpeaker(draft, line)))} label="Add line below" iconOnly />
+            <Action icon={<Trash size={16} weight="bold" />} onClick={() => change((draft) => removeSkitLine(draft, line.id), `Removed skit line ${number}`)} label="Remove line" iconOnly />
+            <VisualPicker line={line} first={number === 1} />
           </Actions>
         }
       />
     </li>
+  );
+}
+
+const KEEP = "";
+
+// Picks the visual that comes up behind the skit on this line.
+function VisualPicker({ line, first }: { line: SkitLine; first: boolean }) {
+  const { change } = useScript();
+  const choose = (value: string) => change((draft) => editSkitLine(draft, line.id, { visual: value === KEEP ? undefined : (value as SkitVisual) }));
+  return (
+    <label className="inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-sm font-bold text-ink-muted hover:bg-stage-sunken has-focus-visible:ring-2 has-focus-visible:ring-blue/60">
+      <MonitorPlay size={16} weight="bold" aria-hidden />
+      <span className="max-sm:sr-only">Slide from here</span>
+      <select aria-label="Slide from here" value={line.visual ?? KEEP} onChange={(event) => choose(event.target.value)} className="bg-transparent font-bold text-ink outline-none">
+        {!first && <option value={KEEP}>Same as above</option>}
+        {skitVisuals.map((visual) => (
+          <option key={visual} value={visual}>
+            {skitVisualNames[visual]}
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }
 

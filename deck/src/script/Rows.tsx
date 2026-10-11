@@ -30,21 +30,25 @@ export function Actions({ children, className = "-ml-2.5" }: { children: ReactNo
   const { editable } = useScript();
   if (!editable) return null;
   return (
-    <div className={`${className} flex gap-1 transition-opacity [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-focus-within:opacity-100 [@media(hover:hover)]:group-hover:opacity-100`}>
+    <div className={`${className} flex flex-wrap gap-1 transition-opacity [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-focus-within:opacity-100 [@media(hover:hover)]:group-hover:opacity-100`}>
       {children}
     </div>
   );
 }
 
-export function Action({ icon, onClick, children }: { icon: ReactNode; onClick: () => void; children: ReactNode }) {
+type ActionProps = { icon: ReactNode; onClick: () => void; label: string; iconOnly?: boolean };
+
+// Icon-only actions keep their name for hover and screen readers.
+export function Action({ icon, onClick, label, iconOnly = false }: ActionProps) {
   return (
     <button
       type="button"
       onClick={onClick}
+      title={iconOnly ? label : undefined}
       className="inline-flex h-9 min-w-9 items-center justify-center gap-1.5 rounded-full px-2.5 text-sm sm:px-3 font-bold text-ink-muted hover:bg-stage-sunken hover:text-ink focus-visible:ring-2 focus-visible:ring-blue/60 focus-visible:outline-none"
     >
       {icon}
-      <span className="max-sm:sr-only">{children}</span>
+      <span className={iconOnly ? "sr-only" : "max-sm:sr-only"}>{label}</span>
     </button>
   );
 }
@@ -69,15 +73,9 @@ export function BeatRow({ row }: { row: RowOf<"beat"> }) {
     <RowFrame visual={<Thumbnail beat={row.beat} position={row.position} />}>
       <LineEditor cue={row.cue} label={`${placeName(row.position)} line`} onChange={(edit) => change((draft) => editCue(draft, row.beat, edit))} onSplit={split} />
       <Actions>
-        <Action icon={<Scissors size={16} weight="bold" />} onClick={() => split(0)}>
-          Split line
-        </Action>
-        <Action icon={<Plus size={16} weight="bold" />} onClick={addBelow}>
-          Add line below
-        </Action>
-        <Action icon={<Trash size={16} weight="bold" />} onClick={remove}>
-          Remove line
-        </Action>
+        <Action icon={<Scissors size={16} weight="bold" />} onClick={() => split(0)} label="Split line" />
+        <Action icon={<Plus size={16} weight="bold" />} onClick={addBelow} label="Add line below" />
+        <Action icon={<Trash size={16} weight="bold" />} onClick={remove} label="Remove line" />
       </Actions>
     </RowFrame>
   );
@@ -104,9 +102,7 @@ export function SplitRow({ row }: { row: RowOf<"split"> }) {
         autoFocus={freshId === row.proposal.id}
       />
       <Actions>
-        <Action icon={<ArrowCounterClockwise size={16} weight="bold" />} onClick={() => change((draft) => withdraw(draft, row.proposal.id))}>
-          Undo split
-        </Action>
+        <Action icon={<ArrowCounterClockwise size={16} weight="bold" />} onClick={() => change((draft) => withdraw(draft, row.proposal.id))} label="Undo split" />
       </Actions>
     </RowFrame>
   );
@@ -122,9 +118,7 @@ export function RemovedRow({ row }: { row: RowOf<"remove"> }) {
       </p>
       {editable && (
         <div className="-ml-2.5">
-          <Action icon={<ArrowCounterClockwise size={16} weight="bold" />} onClick={() => change((draft) => withdraw(draft, row.proposal.id))}>
-            Keep line
-          </Action>
+          <Action icon={<ArrowCounterClockwise size={16} weight="bold" />} onClick={() => change((draft) => withdraw(draft, row.proposal.id))} label="Keep line" />
         </div>
       )}
     </RowFrame>
@@ -138,9 +132,7 @@ export function AddedRow({ row }: { row: RowOf<"add"> }) {
     <RowFrame proposed visual={<SlideNeeded />}>
       <LineEditor cue={row.proposal.cue} label="New line" onChange={revise} autoFocus={freshId === row.proposal.id} />
       <Actions>
-        <Action icon={<Trash size={16} weight="bold" />} onClick={() => change((draft) => withdraw(draft, row.proposal.id))}>
-          Discard new line
-        </Action>
+        <Action icon={<Trash size={16} weight="bold" />} onClick={() => change((draft) => withdraw(draft, row.proposal.id))} label="Discard new line" />
       </Actions>
     </RowFrame>
   );

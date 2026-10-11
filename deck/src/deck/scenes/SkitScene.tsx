@@ -1,10 +1,30 @@
+"use client";
+
 import { assetPath } from "../assetPath";
 import { Show } from "../parts/Show";
 import type { Beat } from "../script";
+import type { SkitVisual } from "../skit";
+import { Backstory, StaySafe, Swoop } from "./skit/PawnzyMoments";
+import { Phone } from "./skit/Phone";
+import { RedFlags } from "./skit/RedFlags";
 
-// Stays up during the skit, so it holds still and keeps to the title.
-export function SkitScene({ beat }: { beat: Beat }) {
-  const shown = beat === "skitStage";
+// Plays behind the live skit. Each visual comes up on the skit line that
+// starts it, so the slide never moves faster than the actors.
+export function SkitScene({ beat, visual }: { beat: Beat; visual: SkitVisual }) {
+  const shownVisual = beat === "skitStage" ? visual : undefined;
+  return (
+    <>
+      <Backdrop shown={shownVisual === "backdrop"} />
+      <Phone visual={shownVisual ?? "backdrop"} />
+      <Swoop shown={shownVisual === "swoop"} />
+      <Backstory shown={shownVisual === "backstory"} />
+      <RedFlags shown={shownVisual === "flags"} />
+      <StaySafe shown={shownVisual === "safe"} />
+    </>
+  );
+}
+
+function Backdrop({ shown }: { shown: boolean }) {
   return (
     <>
       <Show when={shown} className="absolute inset-x-0 top-[170px] text-center">

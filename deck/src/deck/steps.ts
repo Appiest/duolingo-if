@@ -1,12 +1,14 @@
 import { cues, type Cue } from "./cues";
 import { skitSlide, slides, type Beat } from "./script";
-import { skit } from "./skit";
+import { skit, skitSegments, visualAtLine, type SkitLine, type SkitVisual } from "./skit";
 import type { Outline, Position } from "./timeline";
 
 // With the rehearsal strip showing, the skit slide takes one click per skit
-// line so the strip can prompt each one. With it hidden, the skit is one click.
-export function outlineFor(notes: boolean, skitLines = skit.length): Outline {
-  return slides.map((slide, index) => (notes && index === skitSlide && skitLines > 0 ? skitLines : slide.beats.length));
+// line so the strip can prompt each one. With it hidden, it takes one click
+// per skit visual.
+export function outlineFor(notes: boolean, lines: readonly SkitLine[] = skit): Outline {
+  const skitSteps = notes ? lines.length : skitSegments(lines).length;
+  return slides.map((slide, index) => (index === skitSlide ? Math.max(skitSteps, 1) : slide.beats.length));
 }
 
 export function fit(position: Position, outline: Outline): Position {
@@ -16,6 +18,12 @@ export function fit(position: Position, outline: Outline): Position {
 export function beatAt(position: Position): Beat {
   const beats: readonly Beat[] = slides[position.slide].beats;
   return beats[Math.min(position.beat, beats.length - 1)];
+}
+
+export function skitVisualAt(position: Position, notes: boolean, lines: readonly SkitLine[] = skit): SkitVisual {
+  if (position.slide !== skitSlide) return "backdrop";
+  if (notes) return visualAtLine(lines, position.beat);
+  return skitSegments(lines)[position.beat]?.visual ?? "backdrop";
 }
 
 export type Prompt = { cue: Cue; place: string };

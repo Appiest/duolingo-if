@@ -6,6 +6,7 @@ import { memo } from "react";
 import { canvas } from "@/deck/geometry";
 import { Scene } from "@/deck/Scene";
 import type { Beat } from "@/deck/script";
+import type { SkitVisual } from "@/deck/skit";
 import { toSearch, type Position } from "@/deck/timeline";
 
 const WIDTH = 240;
@@ -13,14 +14,14 @@ const SCALE = WIDTH / canvas.w;
 const frame = "relative block shrink-0 overflow-hidden rounded-xl";
 const frameSize = { width: WIDTH, height: canvas.h * SCALE };
 
-type ThumbnailProps = { beat: Beat; position: Position; faded?: boolean };
+type ThumbnailProps = { beat: Beat; position: Position; faded?: boolean; skitVisual?: SkitVisual };
 
 function samePlace(before: ThumbnailProps, after: ThumbnailProps) {
-  return before.beat === after.beat && before.faded === after.faded && before.position.slide === after.position.slide && before.position.beat === after.position.beat;
+  return before.beat === after.beat && before.faded === after.faded && before.skitVisual === after.skitVisual && before.position.slide === after.position.slide && before.position.beat === after.position.beat;
 }
 
 // Each one renders a whole slide, so typing a line must not redraw them all.
-export const Thumbnail = memo(function Thumbnail({ beat, position, faded }: ThumbnailProps) {
+export const Thumbnail = memo(function Thumbnail({ beat, position, faded, skitVisual }: ThumbnailProps) {
   return (
     <Link
       href={`/${toSearch(position)}`}
@@ -30,7 +31,7 @@ export const Thumbnail = memo(function Thumbnail({ beat, position, faded }: Thum
       style={frameSize}
     >
       <div className={faded ? "opacity-35 grayscale" : undefined} style={{ width: canvas.w, height: canvas.h, transform: `scale(${SCALE})`, transformOrigin: "0 0" }} aria-hidden>
-        <Scene beat={beat} />
+        <Scene beat={beat} skitVisual={skitVisual} />
       </div>
     </Link>
   );
