@@ -243,7 +243,7 @@ That opens http://localhost:8800/tools/recorder/. Each line shows who says it, w
 - Use the arrow keys to move between lines. "Still to record" shows only the lines left to do.
 - Recording a line again replaces the old take.
 
-Each take is trimmed, leveled, and saved straight into `assets/voice/`. `assets/voice/manifest.json` updates too, so http://localhost:8800/ plays the lesson with your recordings right away. Commit `assets/voice/` to publish them. A line without a recording plays silently, and the intro chat gives it reading time instead.
+Each take is trimmed, leveled to -20 LUFS so every character plays at the same loudness, and saved straight into `assets/voice/`. `assets/voice/manifest.json` updates too, so http://localhost:8800/ plays the lesson with your recordings right away. Commit `assets/voice/` to publish them. A line without a recording plays silently, and the intro chat gives it reading time instead. To re-level takes recorded before a loudness change, run `python3 tools/record_voices.py --level`.
 
 When you change a spoken line in `lesson.json`, it shows up in the recorder as not recorded yet, because a take belongs to its exact wording.
 

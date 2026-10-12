@@ -3,6 +3,7 @@
 
 Run from the project folder on a Mac:  python3 tools/record_voices.py
 Clean up takes you already recorded:   python3 tools/record_voices.py --retrim
+Level takes you already recorded:      python3 tools/record_voices.py --level
 
 It opens a recording page at http://localhost:8800/tools/recorder/. Each take
 is trimmed, leveled, converted to .m4a, and saved straight into assets/voice/,
@@ -27,7 +28,11 @@ from voice_lines import MANIFEST, ROOT, VOICE_DIR, load_lesson, spoken_lines  # 
 
 PORT = 8800
 MAX_UPLOAD_BYTES = 20 * 1024 * 1024
-LOUDNESS_FILTER = "loudnorm=I=-16:TP=-1.5:LRA=11"
+# Every take is turned up or down by one fixed amount so it lands on the same
+# loudness, measured first and applied second. -20 LUFS leaves room under the
+# lesson's sound effects, and the -3 dB peak ceiling stops loud words clipping.
+LOUDNESS_TARGET = "I=-20:TP=-3:LRA=11"
+PEAK_CEILING = 0.7  # -3 dB, for the odd take loudnorm can't bring under its own ceiling
 FADE_IN_SECONDS = 0.01
 FADE_OUT_SECONDS = 0.05
 UPLOAD_EXTENSIONS = {"audio/mp4": ".mp4", "audio/webm": ".webm", "audio/ogg": ".ogg", "audio/wav": ".wav"}
@@ -65,13 +70,35 @@ def clean_take(source, cleaned):
     bounds = speech_bounds(source) or (0.0, clip_seconds(source))
     start, end = bounds
     length = max(end - start, FADE_IN_SECONDS + FADE_OUT_SECONDS)
-    filters = (
-        f"afade=t=in:d={FADE_IN_SECONDS},"
-        f"afade=t=out:st={length - FADE_OUT_SECONDS:.3f}:d={FADE_OUT_SECONDS},{LOUDNESS_FILTER}"
-    )
+    fades = f"afade=t=in:d={FADE_IN_SECONDS},afade=t=out:st={length - FADE_OUT_SECONDS:.3f}:d={FADE_OUT_SECONDS}"
+    trimmed = cleaned.with_name("trimmed.wav")
     subprocess.run(
         ["ffmpeg", "-y", "-loglevel", "error", "-ss", f"{start:.3f}", "-t", f"{length:.3f}", "-i", str(source),
-         "-af", filters, "-ar", "44100", "-ac", "1", "-c:a", "aac", "-b:a", "96k", str(cleaned)],
+         "-af", fades, "-ar", "44100", "-ac", "1", str(trimmed)],
+        check=True,
+    )
+    level(trimmed, cleaned)
+
+
+def measured_loudness(path):
+    result = subprocess.run(
+        ["ffmpeg", "-hide_banner", "-i", str(path), "-af", f"loudnorm={LOUDNESS_TARGET}:print_format=json", "-f", "null", "-"],
+        check=True, capture_output=True, text=True,
+    )
+    report = result.stderr
+    return json.loads(report[report.rindex("{"):report.rindex("}") + 1])
+
+
+def level(source, leveled):
+    measured = measured_loudness(source)
+    loudnorm = (
+        f"loudnorm={LOUDNESS_TARGET}:linear=true:measured_I={measured['input_i']}:measured_TP={measured['input_tp']}"
+        f":measured_LRA={measured['input_lra']}:measured_thresh={measured['input_thresh']}:offset={measured['target_offset']}"
+        f",alimiter=limit={PEAK_CEILING}:level=false"
+    )
+    subprocess.run(
+        ["ffmpeg", "-y", "-loglevel", "error", "-i", str(source), "-af", loudnorm,
+         "-ar", "44100", "-ac", "1", "-c:a", "aac", "-b:a", "96k", str(leveled)],
         check=True,
     )
 
@@ -80,11 +107,15 @@ def store_take(line_id, source):
     with tempfile.TemporaryDirectory() as scratch:
         cleaned = Path(scratch) / "take.m4a"
         clean_take(source, cleaned)
-        content_hash = hashlib.sha1(cleaned.read_bytes()).hexdigest()[:8]
-        for old in recordings_for(line_id):
-            old.unlink()
-        target = VOICE_DIR / f"{line_id}-{content_hash}.m4a"
-        shutil.move(cleaned, target)
+        return replace_take(line_id, cleaned)
+
+
+def replace_take(line_id, take):
+    content_hash = hashlib.sha1(take.read_bytes()).hexdigest()[:8]
+    for old in recordings_for(line_id):
+        old.unlink()
+    target = VOICE_DIR / f"{line_id}-{content_hash}.m4a"
+    shutil.move(take, target)
     return target
 
 
@@ -175,11 +206,26 @@ def retrim_all():
     print("Re-trimmed every recorded take.")
 
 
+def level_all():
+    for line in current_lines():
+        if not line["file"]:
+            continue
+        with tempfile.TemporaryDirectory() as scratch:
+            leveled = Path(scratch) / "take.m4a"
+            level(ROOT / line["file"], leveled)
+            replace_take(line["id"], leveled)
+    write_manifest()
+    print("Levelled every recorded take.")
+
+
 def main():
     if not shutil.which("ffmpeg"):
         sys.exit("ffmpeg is missing. Install it with: brew install ffmpeg")
     if "--retrim" in sys.argv:
         retrim_all()
+        return
+    if "--level" in sys.argv:
+        level_all()
         return
     VOICE_DIR.mkdir(parents=True, exist_ok=True)
     write_manifest()
