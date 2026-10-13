@@ -6,7 +6,6 @@ import { listenForRemote, sendFailureReason, sendRemote, type RemoteCommand } fr
 
 type Link = "connecting" | "paired";
 
-const HELLO_RETRY_MS = 4000;
 const TAP_BUZZ_MS = 12;
 
 const ROOM_NAME = /^[a-z0-9]{6,32}$/;
@@ -85,14 +84,12 @@ function SentPulse({ sent }: { sent: Sent }) {
   );
 }
 
-// Says hello until the deck answers, so the phone can be scanned before or
-// after the deck is opened.
+// Says hello once when it starts listening. If the deck opens later, the deck
+// announces itself instead, so neither side has to keep asking.
 function usePairing(room: string, onFailure: (reason: string | null) => void): Link {
   const [link, setLink] = useState<Link>("connecting");
   useEffect(() => {
-    let paired = false;
     const hello = () => {
-      if (paired) return;
       sendRemote(room, "deck", "hello").then(
         () => onFailure(null),
         (error: unknown) => onFailure(sendFailureReason(error)),
@@ -102,17 +99,12 @@ function usePairing(room: string, onFailure: (reason: string | null) => void): L
       room,
       "phone",
       (command) => {
-        if (command !== "paired") return;
-        paired = true;
-        setLink("paired");
+        if (command === "ready") hello();
+        if (command === "paired") setLink("paired");
       },
       hello,
     );
-    const retry = window.setInterval(hello, HELLO_RETRY_MS);
-    return () => {
-      stop();
-      window.clearInterval(retry);
-    };
+    return stop;
   }, [room, onFailure]);
   return link;
 }

@@ -28,14 +28,20 @@ export function useRemote(commands: RemoteCommands) {
 
   useEffect(() => {
     if (!deckRoomName) return;
-    return listenForRemote(deckRoomName, "deck", (command) => {
-      if (command === "next") latest.current.next();
-      if (command === "previous") latest.current.previous();
-      if (command !== "hello") return;
-      setPhoneConnected(true);
-      latest.current.onPaired();
-      void sendRemote(deckRoomName, "phone", "paired").catch(() => {});
-    });
+    const tellPhone = (command: "ready" | "paired") => void sendRemote(deckRoomName, "phone", command).catch(() => {});
+    return listenForRemote(
+      deckRoomName,
+      "deck",
+      (command) => {
+        if (command === "next") latest.current.next();
+        if (command === "previous") latest.current.previous();
+        if (command !== "hello") return;
+        setPhoneConnected(true);
+        latest.current.onPaired();
+        tellPhone("paired");
+      },
+      () => tellPhone("ready"),
+    );
   }, [deckRoomName]);
 
   return { room: deckRoomName, phoneConnected };

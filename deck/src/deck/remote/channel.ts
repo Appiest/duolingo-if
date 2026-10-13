@@ -5,7 +5,9 @@
 const RELAY = "https://ntfy.sh";
 const TOPIC_PREFIX = "pawnzy-deck";
 
-export type RemoteCommand = "next" | "previous" | "hello" | "paired";
+// The phone sends next, previous and hello. The deck sends ready when it starts
+// listening and paired in answer to a hello.
+export type RemoteCommand = "next" | "previous" | "hello" | "ready" | "paired";
 
 // Which end of the pair listens to a message: the deck takes commands, and the
 // phone hears back that the deck saw it.
@@ -29,13 +31,15 @@ async function post(url: string, command: RemoteCommand) {
 }
 
 // A phone moving between Wi-Fi and cellular drops the odd request, so a send
-// is tried three times before it counts as failed.
+// that never reached the relay is tried three times. A refusal is not retried:
+// the relay limits requests per network, and retrying would use up more.
 export async function sendRemote(room: string, listener: Listener, command: RemoteCommand) {
   const url = `${RELAY}/${topic(room, listener)}`;
   for (const delay of RETRY_DELAYS_MS) {
     try {
       return await post(url, command);
-    } catch {
+    } catch (error) {
+      if (error instanceof RelayRefused) throw error;
       await new Promise((resolve) => window.setTimeout(resolve, delay));
     }
   }
@@ -51,7 +55,7 @@ export function sendFailureReason(error: unknown): string {
 
 type RelayEvent = { id: string; event: string; message?: string };
 
-const commands = new Set<string>(["next", "previous", "hello", "paired"]);
+const commands = new Set<string>(["next", "previous", "hello", "ready", "paired"]);
 
 function isCommand(message: string | undefined): message is RemoteCommand {
   return message !== undefined && commands.has(message);
