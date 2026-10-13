@@ -2,9 +2,9 @@
 
 import { CaretLeft, CaretRight, CheckCircle, WarningCircle } from "@phosphor-icons/react";
 import { useEffect, useRef, useState, type MouseEvent, type PointerEvent, type ReactNode } from "react";
-import { listenForRemote, sendRemote, type RemoteCommand } from "./channel";
+import { listenForRemote, sendFailureReason, sendRemote, type RemoteCommand } from "./channel";
 
-type Link = "connecting" | "paired" | "failed";
+type Link = "connecting" | "paired";
 
 const HELLO_RETRY_MS = 4000;
 const TAP_BUZZ_MS = 12;
@@ -17,14 +17,15 @@ export function RemoteControl({ room }: { room: string | null }) {
 }
 
 function Clicker({ room }: { room: string }) {
-  const link = usePairing(room);
-  const { send, failed, lastSent } = useSender(room);
+  const [failure, setFailure] = useState<string | null>(null);
+  const link = usePairing(room, setFailure);
+  const { send, lastSent } = useSender(room, setFailure);
   const gesture = useTapOrSwipe({ onTap: () => send("next"), onSwipeBack: () => send("previous") });
   useWakeLock();
   return (
     <main className="h-dvh touch-none bg-rehearsal select-none">
       <button type="button" aria-label="Next slide" {...gesture} className="flex size-full flex-col p-4 text-white">
-        <LinkStatus link={failed ? "failed" : link} />
+        <LinkStatus link={link} failure={failure} />
         <span className="relative flex flex-1 flex-col items-center justify-center gap-4">
           <SentPulse sent={lastSent} />
           <CaretRight size={140} weight="bold" className="text-green" />
@@ -86,12 +87,16 @@ function SentPulse({ sent }: { sent: Sent }) {
 
 // Says hello until the deck answers, so the phone can be scanned before or
 // after the deck is opened.
-function usePairing(room: string): Link {
+function usePairing(room: string, onFailure: (reason: string | null) => void): Link {
   const [link, setLink] = useState<Link>("connecting");
   useEffect(() => {
     let paired = false;
     const hello = () => {
-      if (!paired) void sendRemote(room, "deck", "hello").catch(() => setLink("failed"));
+      if (paired) return;
+      sendRemote(room, "deck", "hello").then(
+        () => onFailure(null),
+        (error: unknown) => onFailure(sendFailureReason(error)),
+      );
     };
     const stop = listenForRemote(
       room,
@@ -108,24 +113,23 @@ function usePairing(room: string): Link {
       stop();
       window.clearInterval(retry);
     };
-  }, [room]);
+  }, [room, onFailure]);
   return link;
 }
 
 // Sends taps one at a time, in order, so two quick taps never arrive swapped.
-function useSender(room: string) {
+function useSender(room: string, onFailure: (reason: string | null) => void) {
   const queue = useRef(Promise.resolve());
-  const [failed, setFailed] = useState(false);
   const [lastSent, setLastSent] = useState<Sent>(null);
   const send = (command: RemoteCommand) => {
     navigator.vibrate?.(TAP_BUZZ_MS);
     setLastSent((previous) => ({ command, count: (previous?.count ?? 0) + 1 }));
     queue.current = queue.current
       .then(() => sendRemote(room, "deck", command))
-      .then(() => setFailed(false))
-      .catch(() => setFailed(true));
+      .then(() => onFailure(null))
+      .catch((error: unknown) => onFailure(sendFailureReason(error)));
   };
-  return { send, failed, lastSent };
+  return { send, lastSent };
 }
 
 // Keeps the phone screen on for the whole talk.
@@ -148,10 +152,17 @@ function useWakeLock() {
 const STATUS: Record<Link, { text: string; className: string; icon: ReactNode }> = {
   connecting: { text: "Looking for the deck…", className: "bg-white/10 text-white", icon: <span className="size-3 animate-pulse rounded-full bg-blue" /> },
   paired: { text: "Connected to the deck", className: "bg-green-wash text-green-text", icon: <CheckCircle size={24} weight="fill" /> },
-  failed: { text: "That tap didn’t send. Check your signal and tap again.", className: "bg-red-wash text-red-text", icon: <WarningCircle size={24} weight="fill" className="shrink-0" /> },
 };
 
-function LinkStatus({ link }: { link: Link }) {
+function LinkStatus({ link, failure }: { link: Link; failure: string | null }) {
+  if (failure) {
+    return (
+      <span role="alert" className="flex min-h-12 items-center gap-3 rounded-2xl bg-red-wash px-4 py-2 text-left text-lg font-extrabold text-red-text">
+        <WarningCircle size={24} weight="fill" className="shrink-0" />
+        {failure}
+      </span>
+    );
+  }
   const status = STATUS[link];
   return (
     <span role="status" className={`flex min-h-12 items-center gap-3 rounded-2xl px-4 py-2 text-lg font-extrabold ${status.className}`}>

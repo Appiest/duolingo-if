@@ -15,9 +15,38 @@ function topic(room: string, listener: Listener) {
   return `${TOPIC_PREFIX}-${room}-${listener}`;
 }
 
+const RETRY_DELAYS_MS = [300, 1000];
+
+export class RelayRefused extends Error {
+  constructor(readonly status: number) {
+    super(`The relay answered ${status}`);
+  }
+}
+
+async function post(url: string, command: RemoteCommand) {
+  const response = await fetch(url, { method: "POST", body: command });
+  if (!response.ok) throw new RelayRefused(response.status);
+}
+
+// A phone moving between Wi-Fi and cellular drops the odd request, so a send
+// is tried three times before it counts as failed.
 export async function sendRemote(room: string, listener: Listener, command: RemoteCommand) {
-  const response = await fetch(`${RELAY}/${topic(room, listener)}`, { method: "POST", body: command });
-  if (!response.ok) throw new Error(`The relay answered ${response.status}`);
+  const url = `${RELAY}/${topic(room, listener)}`;
+  for (const delay of RETRY_DELAYS_MS) {
+    try {
+      return await post(url, command);
+    } catch {
+      await new Promise((resolve) => window.setTimeout(resolve, delay));
+    }
+  }
+  await post(url, command);
+}
+
+// What to tell the presenter when a send fails for good.
+export function sendFailureReason(error: unknown): string {
+  if (error instanceof RelayRefused && error.status === 429) return "Too many taps for the free relay. Wait a minute, then tap again.";
+  if (error instanceof RelayRefused) return `The relay refused the tap (error ${error.status}). Tap again.`;
+  return "This network blocked the tap. Switch the phone to cellular or another Wi-Fi.";
 }
 
 type RelayEvent = { id: string; event: string; message?: string };
