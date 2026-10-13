@@ -24,6 +24,8 @@ export function SkitScene({ beat, visual }: { beat: Beat; visual: SkitVisual }) 
   );
 }
 
+const TEAM = ["Brendan Giang", "Cara Austring", "Anne Pham", "Alexis Limary", "Jerry Wu"];
+
 function Backdrop({ shown }: { shown: boolean }) {
   return (
     <>
@@ -35,6 +37,13 @@ function Backdrop({ shown }: { shown: boolean }) {
         <img src={assetPath("/characters/pawnzy-standing.png")} alt="" width={480} height={480} />
         <img src={assetPath("/characters/duo.png")} alt="" width={380} height={380} />
         <img src={assetPath("/characters/apple.png")} alt="" width={140} height={140} className="mb-5" />
+      </Show>
+      <Show when={shown} delay={0.4} className="absolute inset-x-0 top-[940px]">
+        <ul className="flex justify-center gap-16 text-body font-extrabold text-ink-muted">
+          {TEAM.map((name) => (
+            <li key={name}>{name}</li>
+          ))}
+        </ul>
       </Show>
     </>
   );

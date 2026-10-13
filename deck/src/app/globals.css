@@ -77,3 +77,15 @@ body {
     box-shadow: none !important;
   }
 }
+
+/* The phone remote's confirmation ring: it grows out and fades on every tap. */
+@keyframes remote-pulse {
+  from {
+    opacity: 0.45;
+    scale: 0.4;
+  }
+  to {
+    opacity: 0;
+    scale: 1.4;
+  }
+}
