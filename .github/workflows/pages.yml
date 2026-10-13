@@ -30,6 +30,7 @@ jobs:
         working-directory: deck
         env:
           PAGES_BASE_PATH: /duolingo-if/present
+          NEXT_PUBLIC_ABLY_KEY: ${{ secrets.ABLY_KEY }}
       - name: Put the lesson and the deck together
         run: |
           mkdir _site

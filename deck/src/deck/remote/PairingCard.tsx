@@ -5,7 +5,7 @@ import QRCode from "qrcode";
 import { useMemo } from "react";
 import { canvas } from "../geometry";
 import { Show } from "../parts/Show";
-import { remoteUrl } from "./channel";
+import { remoteAvailable, remoteUrl } from "./channel";
 
 const QR_SIZE = 520;
 const CARD = { width: 1380, height: 720 };
@@ -46,6 +46,9 @@ export function PairingCard({ room, shown, phoneConnected }: { room: string | nu
 }
 
 function ConnectionState({ phoneConnected }: { phoneConnected: boolean }) {
+  if (!remoteAvailable) {
+    return <p className="mt-12 text-lede font-extrabold text-red-text">This copy of the deck was built without the clicker key.</p>;
+  }
   if (phoneConnected) {
     return (
       <p className="mt-12 flex items-center gap-4 text-lede font-black text-green-text">

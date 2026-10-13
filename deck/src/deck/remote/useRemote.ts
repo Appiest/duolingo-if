@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { deckRoom, listenForRemote, sendRemote } from "./channel";
+import { deckRoom, listenForRemote, remoteAvailable, sendRemote } from "./channel";
 
 type RemoteCommands = { next: () => void; previous: () => void; onPaired: () => void };
 
@@ -27,8 +27,8 @@ export function useRemote(commands: RemoteCommands) {
   });
 
   useEffect(() => {
-    if (!deckRoomName) return;
-    const tellPhone = (command: "ready" | "paired") => void sendRemote(deckRoomName, "phone", command).catch(() => {});
+    if (!deckRoomName || !remoteAvailable) return;
+    const tellPhone = (command: "ready" | "paired") => void sendRemote(deckRoomName, command).catch(() => {});
     return listenForRemote(
       deckRoomName,
       "deck",

@@ -1,79 +1,77 @@
-// The phone remote and the deck talk through ntfy.sh, a free public message
-// relay, so they work on any network: venue Wi-Fi, a hotspot, or the phone on
-// cellular. Each deck gets its own random room name, and the phone learns it
-// from the pairing QR code.
-const RELAY = "https://ntfy.sh";
-const TOPIC_PREFIX = "pawnzy-deck";
+import { ErrorInfo, Realtime, type InboundMessage } from "ably";
+
+// The phone remote and the deck talk through Ably, a hosted live-messaging
+// service, so they work on any network: venue Wi-Fi, a hotspot, or the phone
+// on cellular. Each side keeps one connection open, and a tap is a message on
+// it rather than a new web request. Each deck gets its own random room, and
+// the phone learns it from the pairing QR code.
+//
+// The key ships inside the page, so it is limited in Ably's dashboard to
+// publishing and subscribing on pawnzy-deck:* channels.
+const ABLY_KEY = process.env.NEXT_PUBLIC_ABLY_KEY;
 
 // The phone sends next, previous and hello. The deck sends ready when it starts
 // listening and paired in answer to a hello.
 export type RemoteCommand = "next" | "previous" | "hello" | "ready" | "paired";
 
-// Which end of the pair listens to a message: the deck takes commands, and the
-// phone hears back that the deck saw it.
+// Which end of the pair a message is for.
 type Listener = "deck" | "phone";
 
-function topic(room: string, listener: Listener) {
-  return `${TOPIC_PREFIX}-${room}-${listener}`;
+const heardBy: Record<Listener, RemoteCommand[]> = {
+  deck: ["next", "previous", "hello"],
+  phone: ["ready", "paired"],
+};
+
+let client: Realtime | null = null;
+
+function relay(): Realtime {
+  if (!ABLY_KEY) throw new MissingKey();
+  // A tap made while the phone is offline fails rather than waiting, so a
+  // reconnect never delivers a burst of old taps that skips several slides.
+  client ??= new Realtime({ key: ABLY_KEY, echoMessages: false, queueMessages: false });
+  return client;
 }
 
-const RETRY_DELAYS_MS = [300, 1000];
+function channelFor(room: string) {
+  return relay().channels.get(`pawnzy-deck:${room}`);
+}
 
-export class RelayRefused extends Error {
-  constructor(readonly status: number) {
-    super(`The relay answered ${status}`);
+export const remoteAvailable = Boolean(ABLY_KEY);
+
+export class MissingKey extends Error {
+  constructor() {
+    super("No Ably key was built into this page");
   }
 }
 
-async function post(url: string, command: RemoteCommand) {
-  const response = await fetch(url, { method: "POST", body: command });
-  if (!response.ok) throw new RelayRefused(response.status);
+export async function sendRemote(room: string, command: RemoteCommand) {
+  await channelFor(room).publish(command, null);
 }
 
-// A phone moving between Wi-Fi and cellular drops the odd request, so a send
-// that never reached the relay is tried three times. A refusal is not retried:
-// the relay limits requests per network, and retrying would use up more.
-export async function sendRemote(room: string, listener: Listener, command: RemoteCommand) {
-  const url = `${RELAY}/${topic(room, listener)}`;
-  for (const delay of RETRY_DELAYS_MS) {
-    try {
-      return await post(url, command);
-    } catch (error) {
-      if (error instanceof RelayRefused) throw error;
-      await new Promise((resolve) => window.setTimeout(resolve, delay));
-    }
-  }
-  await post(url, command);
-}
-
-// What to tell the presenter when a send fails for good.
+// What to tell the presenter when a send fails.
 export function sendFailureReason(error: unknown): string {
-  if (error instanceof RelayRefused && error.status === 429) return "Too many taps for the free relay. Wait a minute, then tap again.";
-  if (error instanceof RelayRefused) return `The relay refused the tap (error ${error.status}). Tap again.`;
-  return "This network blocked the tap. Switch the phone to cellular or another Wi-Fi.";
+  if (error instanceof MissingKey) return "This page was built without the clicker key. Ask Brendan to rebuild it.";
+  if (error instanceof ErrorInfo && (error.statusCode === 401 || error.statusCode === 403)) return "The clicker key was refused. Check it in Ably.";
+  if (error instanceof ErrorInfo && error.statusCode === 429) return "Too many taps at once. Wait a moment, then tap again.";
+  return "The tap didn’t reach the deck. Check the phone’s signal, then tap again.";
 }
 
-type RelayEvent = { id: string; event: string; message?: string };
-
-const commands = new Set<string>(["next", "previous", "hello", "ready", "paired"]);
-
-function isCommand(message: string | undefined): message is RemoteCommand {
-  return message !== undefined && commands.has(message);
-}
-
-// Listens until the returned function is called. A reconnect can replay a
-// message, so each message id is acted on once.
+// Listens until the returned function is called. onOpen runs once the channel
+// is attached, so a message sent from there reaches the other side.
 export function listenForRemote(room: string, listener: Listener, onCommand: (command: RemoteCommand) => void, onOpen?: () => void) {
-  const source = new EventSource(`${RELAY}/${topic(room, listener)}/sse`);
-  const seen = new Set<string>();
-  source.onopen = () => onOpen?.();
-  source.onmessage = (event: MessageEvent<string>) => {
-    const data = JSON.parse(event.data) as RelayEvent;
-    if (data.event !== "message" || seen.has(data.id) || !isCommand(data.message)) return;
-    seen.add(data.id);
-    onCommand(data.message);
-  };
-  return () => source.close();
+  const channel = channelFor(room);
+  const onMessage = (message: InboundMessage) => onCommand(message.name as RemoteCommand);
+  void channel.subscribe(heardBy[listener], onMessage).then(() => onOpen?.(), () => {});
+  return () => channel.unsubscribe(heardBy[listener], onMessage);
+}
+
+// Calls back with true while the connection to Ably is up.
+export function watchConnection(onChange: (connected: boolean) => void) {
+  const connection = relay().connection;
+  const update = () => onChange(connection.state === "connected");
+  connection.on(update);
+  update();
+  return () => connection.off(update);
 }
 
 const roomKey = "pawnzy-deck:remote-room";

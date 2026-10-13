@@ -2,9 +2,9 @@
 
 import { CaretLeft, CaretRight, CheckCircle, WarningCircle } from "@phosphor-icons/react";
 import { useEffect, useRef, useState, type MouseEvent, type PointerEvent, type ReactNode } from "react";
-import { listenForRemote, sendFailureReason, sendRemote, type RemoteCommand } from "./channel";
+import { listenForRemote, sendFailureReason, sendRemote, watchConnection, type RemoteCommand } from "./channel";
 
-type Link = "connecting" | "paired";
+type Link = "connecting" | "paired" | "reconnecting";
 
 const TAP_BUZZ_MS = 12;
 
@@ -84,29 +84,34 @@ function SentPulse({ sent }: { sent: Sent }) {
   );
 }
 
-// Says hello once when it starts listening. If the deck opens later, the deck
+// Says hello once the phone is listening. If the deck opens later, the deck
 // announces itself instead, so neither side has to keep asking.
 function usePairing(room: string, onFailure: (reason: string | null) => void): Link {
-  const [link, setLink] = useState<Link>("connecting");
+  const [paired, setPaired] = useState(false);
+  const [connected, setConnected] = useState(true);
   useEffect(() => {
-    const hello = () => {
-      sendRemote(room, "deck", "hello").then(
-        () => onFailure(null),
-        (error: unknown) => onFailure(sendFailureReason(error)),
-      );
-    };
-    const stop = listenForRemote(
-      room,
-      "phone",
-      (command) => {
+    try {
+      const hello = () => {
+        sendRemote(room, "hello").then(
+          () => onFailure(null),
+          (error: unknown) => onFailure(sendFailureReason(error)),
+        );
+      };
+      const stopListening = listenForRemote(room, "phone", (command) => {
         if (command === "ready") hello();
-        if (command === "paired") setLink("paired");
-      },
-      hello,
-    );
-    return stop;
+        if (command === "paired") setPaired(true);
+      }, hello);
+      const stopWatching = watchConnection(setConnected);
+      return () => {
+        stopListening();
+        stopWatching();
+      };
+    } catch (error) {
+      onFailure(sendFailureReason(error));
+    }
   }, [room, onFailure]);
-  return link;
+  if (!connected) return "reconnecting";
+  return paired ? "paired" : "connecting";
 }
 
 // Sends taps one at a time, in order, so two quick taps never arrive swapped.
@@ -117,7 +122,7 @@ function useSender(room: string, onFailure: (reason: string | null) => void) {
     navigator.vibrate?.(TAP_BUZZ_MS);
     setLastSent((previous) => ({ command, count: (previous?.count ?? 0) + 1 }));
     queue.current = queue.current
-      .then(() => sendRemote(room, "deck", command))
+      .then(() => sendRemote(room, command))
       .then(() => onFailure(null))
       .catch((error: unknown) => onFailure(sendFailureReason(error)));
   };
@@ -143,6 +148,7 @@ function useWakeLock() {
 
 const STATUS: Record<Link, { text: string; className: string; icon: ReactNode }> = {
   connecting: { text: "Looking for the deck…", className: "bg-white/10 text-white", icon: <span className="size-3 animate-pulse rounded-full bg-blue" /> },
+  reconnecting: { text: "Signal lost. Reconnecting…", className: "bg-white/10 text-white", icon: <span className="size-3 animate-pulse rounded-full bg-red" /> },
   paired: { text: "Connected to the deck", className: "bg-green-wash text-green-text", icon: <CheckCircle size={24} weight="fill" /> },
 };
 
