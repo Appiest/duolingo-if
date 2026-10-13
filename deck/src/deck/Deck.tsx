@@ -2,6 +2,8 @@
 
 import { MotionConfig } from "motion/react";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { PairingCard } from "./remote/PairingCard";
+import { useRemote } from "./remote/useRemote";
 import { notesShown, notesShownOnServer, subscribeToNotes, toggleNotes } from "./notes";
 import { Rehearsal } from "./Rehearsal";
 import { Scene } from "./Scene";
@@ -13,6 +15,9 @@ import { beatAt, fit, outlineFor, promptAt, skitVisualAt } from "./steps";
 import { advance, last, retreat, start, toSearch, type Position } from "./timeline";
 import { useDeckControls } from "./useDeckControls";
 
+// How long "Phone connected" stays up before the pairing card closes itself.
+const PAIRED_CARD_MS = 1500;
+
 export function Deck({ initial }: { initial: Position }) {
   const [requested, setPosition] = useState(initial);
   const showingNotes = useSyncExternalStore(subscribeToNotes, notesShown, notesShownOnServer);
@@ -23,6 +28,7 @@ export function Deck({ initial }: { initial: Position }) {
   const skitVisual = skitVisualAt(position, showingNotes);
   useTextAlert(beat, skitVisual);
 
+  const [pairing, setPairing] = useState(false);
   const commands = useMemo(
     () => ({
       next: () => setPosition((current) => advance(fit(current, outline), outline)),
@@ -30,10 +36,16 @@ export function Deck({ initial }: { initial: Position }) {
       first: () => setPosition(start),
       last: () => setPosition(last(outline)),
       notes: toggleNotes,
+      pair: () => setPairing((open) => !open),
     }),
     [outline],
   );
   useDeckControls(commands);
+  const remote = useRemote({
+    next: commands.next,
+    previous: commands.previous,
+    onPaired: () => window.setTimeout(() => setPairing(false), PAIRED_CARD_MS),
+  });
 
   useEffect(() => {
     window.history.replaceState(null, "", `${window.location.pathname}${search}`);
@@ -46,6 +58,7 @@ export function Deck({ initial }: { initial: Position }) {
         <p className="sr-only" aria-live="polite">{`Slide ${position.slide + 1} of ${slides.length}, beat ${position.beat + 1}`}</p>
         <Stage>
           <Scene beat={beat} skitVisual={skitVisual} />
+          <PairingCard room={remote.room} shown={pairing} phoneConnected={remote.phoneConnected} />
         </Stage>
         <Rehearsal prompt={promptAt(position, showingNotes)} shown={showingNotes} />
       </main>

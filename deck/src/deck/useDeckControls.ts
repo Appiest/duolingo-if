@@ -8,6 +8,7 @@ type Commands = {
   first: () => void;
   last: () => void;
   notes: () => void;
+  pair: () => void;
 };
 
 const keyActions: Record<string, keyof Commands | "fullscreen"> = {
@@ -26,6 +27,8 @@ const keyActions: Record<string, keyof Commands | "fullscreen"> = {
   F: "fullscreen",
   n: "notes",
   N: "notes",
+  p: "pair",
+  P: "pair",
 };
 
 export function toggleFullscreen() {
